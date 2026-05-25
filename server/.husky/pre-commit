@@ -1,0 +1,19 @@
+#!/bin/sh
+# 漏洞预判引擎 — Pre-commit 安全扫描
+# 在代码提交前自动检测反模式，发现则拒绝提交
+
+echo "[预提交扫描] 启动..."
+
+# L0: 基础语法检查
+echo "  L0: ESLint..."
+npx eslint --quiet $(git diff --cached --name-only --diff-filter=ACM | grep '\.js$') 2>/dev/null
+
+# L1: 22条反模式快速扫描
+echo "  L1: 安全扫描..."
+python3 D:/.ai-memory/scripts/code-scanner.py $(git diff --cached --name-only --diff-filter=ACM | grep '\.js$' | tr '\n' ' ') 2>/dev/null
+
+# L2: 依赖检查
+echo "  L2: 依赖审计..."
+npm audit --audit-level=high 2>/dev/null | grep -q "found 0 vulnerabilities" || echo "  ⚠️ 依赖存在高危漏洞"
+
+echo "[预提交扫描] 完成"

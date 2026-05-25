@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(New-Item:*)",
+      "Bash(Start-Sleep:*)",
+      "Bash(Invoke-WebRequest:*)",
+      "Bash(Get-Content:*)",
+      "Bash(Set-Location:*)",
+      "Bash(Write-Host:*)",
+      "Bash(npx:*)",
+      "Edit(*)",
+      "Write(*)",
+      "Read(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "Agent(*)",
+      "Skill(*)"
+    ]
+  }
+}

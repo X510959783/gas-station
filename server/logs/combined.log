@@ -1,0 +1,28 @@
+{"level":"info","message":"园中园燃气后端服务运行在 http://localhost:3000","timestamp":"2026-05-24 18:22:54"}
+{"level":"info","message":"园中园燃气后端服务运行在 http://localhost:3000","timestamp":"2026-05-24 18:27:16"}
+{"duration":13,"level":"info","message":"GET /api/health 503 13ms","method":"GET","requestId":"d8418e96","status":503,"timestamp":"2026-05-24 18:27:19","url":"/api/health"}
+{"duration":2,"level":"info","message":"GET /api/products 500 2ms","method":"GET","requestId":"961dd874","status":500,"timestamp":"2026-05-24 18:27:19","url":"/api/products"}
+{"duration":1,"level":"info","message":"GET /api/stations 500 1ms","method":"GET","requestId":"294b08d0","status":500,"timestamp":"2026-05-24 18:27:19","url":"/api/stations"}
+{"duration":1,"level":"info","message":"GET /api/nonexist 404 1ms","method":"GET","requestId":"a2c4ee1d","status":404,"timestamp":"2026-05-24 18:27:19","url":"/api/nonexist"}
+{"duration":2,"level":"info","message":"GET /api/health 503 2ms","method":"GET","requestId":"847e2668","status":503,"timestamp":"2026-05-24 18:28:21","url":"/api/health"}
+{"level":"info","message":"园中园燃气后端服务运行在 http://localhost:3000","timestamp":"2026-05-24 21:15:45"}
+{"duration":3,"level":"info","message":"GET /api/health 503 3ms","method":"GET","requestId":"4b86b91f","status":503,"timestamp":"2026-05-24 21:15:49","url":"/api/health"}
+{"duration":3,"level":"info","message":"GET /api/products 500 3ms","method":"GET","requestId":"bf2ac791","status":500,"timestamp":"2026-05-24 21:15:49","url":"/api/products"}
+{"duration":1,"level":"info","message":"GET /api/stations 500 1ms","method":"GET","requestId":"274c9f53","status":500,"timestamp":"2026-05-24 21:15:49","url":"/api/stations"}
+{"duration":1,"level":"info","message":"GET /api/nonexist 404 1ms","method":"GET","requestId":"76490274","status":404,"timestamp":"2026-05-24 21:15:49","url":"/api/nonexist"}
+{"level":"info","message":"园中园燃气后端服务运行在 http://localhost:3000","timestamp":"2026-05-24 21:18:13"}
+{"duration":12,"level":"info","message":"GET /api/health 200 12ms","method":"GET","requestId":"1cbd263c","status":200,"timestamp":"2026-05-24 21:18:16","url":"/api/health"}
+{"duration":6,"level":"info","message":"GET /api/products 200 6ms","method":"GET","requestId":"8f25de60","status":200,"timestamp":"2026-05-24 21:18:16","url":"/api/products"}
+{"duration":2,"level":"info","message":"GET /api/stations 200 2ms","method":"GET","requestId":"9e6f510a","status":200,"timestamp":"2026-05-24 21:18:16","url":"/api/stations"}
+{"duration":0,"level":"info","message":"GET /api/nonexist 404 0ms","method":"GET","requestId":"1d7ff1d6","status":404,"timestamp":"2026-05-24 21:18:16","url":"/api/nonexist"}
+{"duration":1,"level":"info","message":"GET /api/health 200 1ms","method":"GET","requestId":"b6799ed7","status":200,"timestamp":"2026-05-24 21:19:38","url":"/api/health"}
+{"level":"info","message":"园中园燃气后端服务运行在 http://localhost:3000","timestamp":"2026-05-24 21:22:06"}
+{"duration":20,"level":"info","message":"GET /api/health 200 20ms","method":"GET","requestId":"aa4a8dc3","status":200,"timestamp":"2026-05-24 21:22:09","url":"/api/health"}
+{"duration":3,"level":"info","message":"GET /api/health 200 3ms","method":"GET","requestId":"ee9a5bca","status":200,"timestamp":"2026-05-24 21:26:45","url":"/api/health"}
+{"duration":1,"level":"info","message":"GET /api/health 200 1ms","method":"GET","requestId":"69b78621","status":200,"timestamp":"2026-05-24 21:27:22","url":"/api/health"}
+{"duration":1,"level":"info","message":"GET /api/health 200 1ms","method":"GET","requestId":"8f5461c8","status":200,"timestamp":"2026-05-24 21:29:43","url":"/api/health"}
+{"duration":1,"level":"info","message":"GET /api/health 200 1ms","method":"GET","requestId":"1df658a9","status":200,"timestamp":"2026-05-24 21:44:43","url":"/api/health"}
+{"level":"info","message":"园中园燃气后端服务运行在 http://localhost:3000","timestamp":"2026-05-25 04:22:47"}
+{"level":"info","message":"园中园燃气后端服务运行在 http://localhost:3000","timestamp":"2026-05-25 04:34:40"}
+{"level":"info","message":"园中园燃气后端服务运行在 http://localhost:3000","timestamp":"2026-05-25 04:55:49"}
+{"level":"info","message":"园中园燃气后端服务运行在 http://localhost:3000","timestamp":"2026-05-25 05:37:54"}

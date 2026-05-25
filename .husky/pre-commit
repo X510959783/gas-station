@@ -1,0 +1,40 @@
+#!/bin/sh
+# Layer 2 漏洞预判引擎 v1 — pre-commit hook
+# L0: ESLint (快速)
+# L1: 22条反模式 (2s)
+# L2: Semgrep + npm audit (5s)
+
+echo "=== [漏洞预判引擎] ==="
+start_time=$(date +%s)
+
+# L0 — ESLint（可选）
+if command -v npx >/dev/null 2>&1 && [ -f package.json ]; then
+  if grep -q '"eslint"' package.json 2>/dev/null; then
+    echo "[L0] ESLint 检查..."
+    npx eslint . --max-warnings=0 || exit 1
+  fi
+fi
+
+# L1 — 22条反模式扫描（--diff 模式）
+echo "[L1] 安全反模式扫描..."
+SCANNER="D:/.ai-memory/scripts/code-scanner.py"
+if command -v git >/dev/null 2>&1; then
+  # 只扫描本次变更的文件
+  CHANGED=$(git diff --cached --name-only --diff-filter=ACMRT | grep '\.js$' | tr '\n' ',')
+  if [ -n "$CHANGED" ]; then
+    python3 "$SCANNER" --diff "$CHANGED" "D:/gas-station/server" 2>&1
+  else
+    echo "  (无 JS 文件变更，跳过)"
+  fi
+else
+  python3 "$SCANNER" "D:/gas-station/server" 2>&1 | tail -5
+fi
+
+# L2 — npm audit
+echo "[L2] 依赖审计..."
+if [ -f package.json ]; then
+  npm audit --audit-level=high 2>/dev/null || echo "  [警告] 有高危依赖，请运行 npm audit fix"
+fi
+
+elapsed=$(($(date +%s) - start_time))
+echo "=== [扫描完成: ${elapsed}s] ==="
