@@ -52,4 +52,10 @@ for mod in "framework-v2-minimal.md" "deepdig-framework-v3.2.md" "INSPECTION-REP
   fi
 done
 
+# 6. "无告警也是告警"——写入时间戳文件证明Hook曾运行
+HOOK_LOG=".claude/tracking/.last-health-check"
+mkdir -p "$(dirname "$HOOK_LOG")"
+echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) HEALTH_CHECK_PASSED" > "$HOOK_LOG"
+echo "[明鉴] 健康检查时间戳已写入: $HOOK_LOG"
+
 echo "[明鉴] 健康检查完毕"
