@@ -1,0 +1,90 @@
+{
+  "tracking_system": "深挖v3.0闭环追踪",
+  "methodology": "Reasoning Loop + ESAA-Security + Dawgen",
+  "updated": "2026-05-28",
+  "root_risks": [
+    {
+      "id": "root-1",
+      "name": "框架建立时无外部验证",
+      "status": "OPEN",
+      "action": "需老板外部裁决",
+      "derivatives": ["#47","#48","#54","#80","#83","#91","#92","#69"]
+    },
+    {
+      "id": "root-2",
+      "name": "所有体系同一模型",
+      "status": "OPEN",
+      "action": "结构性不可逆（需换模型/外部镜像）",
+      "derivatives": ["#58","#59","#60","#66","#67"]
+    },
+    {
+      "id": "root-3",
+      "name": "框架文件零版本控制",
+      "status": "CLOSED",
+      "fixed_at": "2026-05-28",
+      "evidence": "git commit 634f764d + 9e1b11c8",
+      "derivatives": ["#84","#49","#85","#41","#65"]
+    },
+    {
+      "id": "root-4",
+      "name": "核心执行机制不可审计",
+      "status": "OPEN",
+      "action": "结构性不可逆（内部认知行为无法外部验证）",
+      "derivatives": ["#39","#73","#55","#82","#53"]
+    },
+    {
+      "id": "root-5",
+      "name": "框架设计无退出/终局",
+      "status": "CLOSED",
+      "fixed_at": "2026-05-28",
+      "evidence": "framework-v2-minimal.md L17-18: COMPLETION_CONDITION + EXIT_PROCEDURE",
+      "derivatives": ["#96","#97","#107","#108","#98"]
+    },
+    {
+      "id": "root-6",
+      "name": "规则只增不减",
+      "status": "CLOSED",
+      "fixed_at": "2026-05-28",
+      "evidence": "framework-v2-minimal.md: 7条规则替代3035行",
+      "derivatives": ["#75","#76","#45","#102","#27"]
+    },
+    {
+      "id": "root-7",
+      "name": "接口单向声明",
+      "status": "CLOSED",
+      "fixed_at": "2026-05-28",
+      "evidence": "framework-v2-minimal.md删除了所有跨系统接口声明",
+      "derivatives": ["#51","#52"]
+    },
+    {
+      "id": "root-8",
+      "name": "遗漏不对称",
+      "status": "CLOSED",
+      "fixed_at": "2026-05-28",
+      "evidence": "framework-v2-minimal.md规则5: 遗漏自查",
+      "derivatives": ["#86","#87","#101","#78"]
+    },
+    {
+      "id": "root-9",
+      "name": "自审计无结构性边界",
+      "status": "CLOSED",
+      "fixed_at": "2026-05-28",
+      "evidence": "framework-v2-minimal.md L16: MAX_RECURSION_DEPTH=5",
+      "derivatives": ["#44","#105","#46","#106"]
+    },
+    {
+      "id": "root-10",
+      "name": "感知过滤器",
+      "status": "OPEN",
+      "action": "需老板外部裁决 + 外部镜像验证",
+      "derivatives": ["#99","#100","#88","#89"]
+    }
+  ],
+  "summary": {
+    "total": 10,
+    "closed": 6,
+    "open": 4,
+    "structural_irreversible": 2,
+    "needs_boss": 2
+  }
+}
