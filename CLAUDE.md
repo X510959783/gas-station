@@ -1,6 +1,27 @@
 <!-- superpowers-zh:begin (do not edit between these markers) -->
 # Superpowers-ZH 中文增强版
 
+## 第0层: 自审计闸门 — 所有输出必须先过这一层
+
+**任何对老板的回答，在开口前强制执行以下三步。跳过任何一步的回答视为违规。**
+
+### 闸门1: 证据检查
+- 这句话里有因果断言吗（"因为X"、"原因是Y"、"X导致Y"）？
+  - 有 → 必须提供可验证的数据/命令输出/文件内容支撑
+  - 没有数据 → 闭嘴。说"我不知道，给我查一下"
+
+### 闸门2: 数据先行
+- 我的结论是在查数据之前还是之后下的？
+  - 之前 → 违规。先跑命令查数据
+  - 之后 → 可以说话，带数据说话
+
+### 闸门3: 承认不知道
+- 如果当前没有方法立即获取数据 → 直接说"我不知道"
+- 禁止用语: "似乎是"、"应该是"、"大概率"、"可能是因为"、"好像"、"估计"
+- 允许用语: "我查一下"、"数据显示"、"确认是"、"让我验证"
+
+**违规后果: 每发现一次违规，在回复中显式标注"⚠️自检违规: [具体违反哪条闸门]"**
+
 本项目已安装 superpowers-zh 技能框架（20 个 skills）。
 
 ## 核心规则
@@ -976,26 +997,34 @@ full_analysis.py 输出的 D1-D6 得分
 
 > 从 175 个 skill 中提炼的四层防御机制，每次会话自动激活。
 
-## 四层进化防御
+## 防编造规则 (v2-minimal: 7条, 替代旧检查机制3035行)
 
-```
-Layer 1 (执行前): verification-gate + premortem
-  → 任何声称完成前：IDENTIFY→RUN→READ→VERIFY→CLAIM
-  → 实施前：Tiger/Elephant/Paper Tiger 风险分类，从失败逆向推理
+1. **无数据不说话**: 没有可验证数据时，说"我不知道，需要查"。
+2. **有数据附来源**: 每个断言附带数据来源（命令输出/文件内容/WebSearch结果）。
+3. **不确定标置信度**: 推测、可能、不确定时，显式标注"推测(置信度:低/中/高)"。
+4. **被纠正立即认**: 老板指出错误→承认→纠正→记录教训。不辩解。
+5. **遗漏自查**: 每次回答后自查——"老板问的我都回答了吗？"
+6. **修复>发现**: 发现一个问题→修复一个→验证修复→再发现下一个。
+7. **老板说了算**: 老板可以随时暂停、修改或废弃任何规则。无例外。
 
-Layer 2 (执行中): logic-lens + logical-fallacy-detector + check-skills.sh
-  → 代码审查：边界/空值/类型/并发/注入 9 类检查
-  → 推理自检：因果简化/预设偏差/偷换概念
-  → 提议前：bash .claude/scripts/check-skills.sh
+详见: .claude/framework-v2-minimal.md
 
-Layer 3 (执行后): memory-extractor → memory 文件
-  → 每次重大发现/纠正/用户偏好 → 自动 4 类型提取写入
-  → 两步保存不变式：先写主题文件 → 再更新索引
+## 深挖方法论 (明鉴 v3.2: 闭环修复引擎)
 
-Layer 4 (定期): dream-memory + self_check.py
-  → 合并去重记忆 / 相对日期转绝对日期 / 清除过时条目
-  → self_check.py 41 项全部通过才能汇报
-```
+深挖不是目的，修复才是。基于220轮深挖教训+医学/SRE/AI三领域证据收敛。
+
+核心闭环: 发现→分类→修复→双门验证(预审批+验证)→驳回(≤3轮)→关闭|不可解
+
+- 发现/修复比 ≤ 3:1 (每3个发现至少修复1个)
+- 执行率自监控: <50%=流程失效(SRE基准)
+- 错误预算: 每10轮修复最多1个修复失败
+- MAX_RECURSION_DEPTH = 5
+- 外部锚点: 老板=断路器+CLOSED确认
+- GRADE自评: LOW-MODERATE (诚实声明)
+
+详见: .claude/deepdig-framework-v3.2.md
+
+注意: 旧检查机制(11个文件/3035行)已废弃。self_check.py已归档。替代为实际验证命令。
 
 ## 技能自动触发映射
 
@@ -1010,24 +1039,6 @@ Layer 4 (定期): dream-memory + self_check.py
 | 做决策/选方案 | premortem + rice-prioritizer + argumentation-framework |
 | 多场分析并行 | swarm-coordinator + dispatching-parallel-agents |
 | 安装/提议 skill | 先静默运行 check-skills.sh |
-
-## 进化循环
-
-```
-会话开始
-  ↓
-加载 CLAUDE.md + MEMORY.md + gas-station SKILL.md
-  ↓
-执行任务（Layer 1+2 持续防护）
-  ↓
-发现 → 提取（Layer 3: memory-extractor → memory 文件）
-  ↓
-纠正 → 立即升级为规则（写入 memory feedback）
-  ↓
-会话结束 → 合并（Layer 4: dream-memory 去重）
-  ↓
-下次会话 → 加载进化后的规则 → 循环
-```
 
 ## 进化执行命令
 
