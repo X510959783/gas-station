@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🔗 三工具中枢自检",
+      "type": "shell",
+      "command": "node",
+      "args": [
+        "D:\\OpenClaw\\scripts\\check-pending.mjs"
+      ],
+      "group": "none",
+      "presentation": {
+        "echo": false,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "runOptions": {
+        "runOn": "folderOpen",
+        "instanceLimit": 1
+      },
+      "problemMatcher": []
+    }
+  ]
+}

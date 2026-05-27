@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const pool = require('../config/db')
+const cfg = require('../config/env')
+const { z } = require('zod')
+const validate = require('../middleware/validate')
 const { authRequired } = require('../middleware/auth')
 const { serverError } = require('../utils/response')
 
@@ -12,15 +15,28 @@ function getOrderNo(date, insertId) {
   return 'GS' + dateStr + String(insertId).padStart(6, '0')
 }
 
+// ─── Zod Schemas ───
+
+const createOrderSchema = z.object({
+  product_id: z.coerce.number().int().positive('请选择商品'),
+  quantity: z.coerce.number().int().min(1).max(cfg.MAX_ORDER_QTY).default(1),
+  contact_name: z.string().max(50).optional().default(''),
+  contact_phone: z.string().regex(/^\d{11}$/, '手机号格式不正确'),
+  delivery_address: z.string().min(1, '请填写配送地址').max(200),
+  delivery_time: z.string().max(50).optional().default('尽快送达'),
+  delivery_remark: z.string().max(500).optional().default(''),
+})
+
+const listOrdersSchema = z.object({
+  status: z.enum(['all', 'pending', 'assigned', 'delivering', 'completed', 'cancelled']).optional().default('all'),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().min(1).max(cfg.MAX_PAGE_SIZE).default(20),
+})
+
 // 创建订单（事务保护，避免数据不一致）
-router.post('/', authRequired, async (req, res) => {
+router.post('/', authRequired, validate({ body: createOrderSchema }), async (req, res) => {
   const userId = req.user.id
-
   const { product_id, quantity, delivery_time, contact_name, contact_phone, delivery_address, delivery_remark } = req.body
-
-  if (!product_id) return res.status(400).json({ code: 400, message: '请选择商品' })
-  if (!contact_phone) return res.status(400).json({ code: 400, message: '请填写联系电话' })
-  if (!delivery_address) return res.status(400).json({ code: 400, message: '请填写配送地址' })
 
   const conn = await pool.getConnection()
   try {
@@ -30,7 +46,7 @@ router.post('/', authRequired, async (req, res) => {
     if (products.length === 0) throw { code: 400, message: '商品不存在或已下架' }
     const realProduct = products[0]
 
-    const qty = Math.min(Math.max(quantity || 1, 1), 99)
+    const qty = Math.min(Math.max(quantity || 1, 1), cfg.MAX_ORDER_QTY)
     const realPrice = Number(realProduct.price)
     const total_amount = realPrice * qty
 
@@ -66,22 +82,20 @@ router.post('/', authRequired, async (req, res) => {
 })
 
 // 订单列表（支持分页）
-router.get('/', authRequired, async (req, res) => {
+router.get('/', authRequired, validate({ query: listOrdersSchema }), async (req, res) => {
   const userId = req.user.id
-  const { status, page, limit } = req.query
-  const p = Math.max(parseInt(page) || 1, 1)
-  const l = Math.min(Math.max(parseInt(limit) || 20, 1), 100)
+  const { status, page: p, limit: l } = req.query
 
   try {
     let where = 'WHERE user_id = ?'
     const params = [userId]
     if (status && status !== 'all') { where += ' AND status = ?'; params.push(status) }
 
-    const [countResult] = await pool.query(`SELECT COUNT(*) as total FROM orders ${where}`, params)
+    const [countResult] = await pool.query('SELECT COUNT(*) as total FROM orders ' + where, params)
     const total = countResult[0].total
 
     const [rows] = await pool.query(
-      `SELECT id, order_no, user_id, product_id, product_name, product_spec, product_price, quantity, total_amount, contact_name, contact_phone, delivery_address, delivery_time, delivery_remark, status, created_at FROM orders ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+      'SELECT id, order_no, user_id, product_id, product_name, product_spec, product_price, quantity, total_amount, contact_name, contact_phone, delivery_address, delivery_time, delivery_remark, status, created_at FROM orders ' + where + ' ORDER BY created_at DESC LIMIT ? OFFSET ?',
       [...params, l, (p - 1) * l]
     )
     res.json({ code: 0, data: rows, pagination: { page: p, limit: l, total, totalPages: Math.ceil(total / l) } })
@@ -90,10 +104,10 @@ router.get('/', authRequired, async (req, res) => {
   }
 })
 
-// 订单详情（通过 order_no）
-router.get('/detail/:orderNo', async (req, res) => {
+// 订单详情（通过 order_no，已登录用户只能查看自己的订单）
+router.get('/detail/:orderNo', authRequired, async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT id, order_no, user_id, product_id, product_name, product_spec, product_price, quantity, total_amount, contact_name, contact_phone, delivery_address, delivery_time, delivery_remark, status, created_at FROM orders WHERE order_no = ?', [req.params.orderNo])
+    const [rows] = await pool.query('SELECT id, order_no, user_id, product_id, product_name, product_spec, product_price, quantity, total_amount, contact_name, contact_phone, delivery_address, delivery_time, delivery_remark, status, created_at FROM orders WHERE order_no = ? AND user_id = ?', [req.params.orderNo, req.user.id])
     if (rows.length === 0) return res.status(404).json({ code: 404, message: '订单不存在' })
     res.json({ code: 0, data: rows[0] })
   } catch (e) {

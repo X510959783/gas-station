@@ -1,15 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node:*)",
-      "Bash(npm:*)",
-      "Bash(New-Item:*)",
-      "Bash(Start-Sleep:*)",
-      "Bash(Invoke-WebRequest:*)",
-      "Bash(Get-Content:*)",
-      "Bash(Set-Location:*)",
-      "Bash(Write-Host:*)",
-      "Bash(npx:*)",
+      "Bash(*)",
       "Edit(*)",
       "Write(*)",
       "Read(*)",
@@ -19,6 +11,40 @@
       "WebSearch(*)",
       "Agent(*)",
       "Skill(*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/session-start.sh 2>&1"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/stop.sh 2>&1"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "path": "server/",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node server/scripts/quality-gate.js ${CLAUDE_TOOL_INPUT_FILE_PATH} 2>&1"
+          }
+        ]
+      }
     ]
   }
 }

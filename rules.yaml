@@ -1,0 +1,256 @@
+# 园中园足彩框架 v4.0 规则配置
+# 碰撞#35产物: 消歧规则系统
+# 修改此文件→运行 collision_verify.py →通过→生效
+# 不要直接改 framework_v4.py 中的规则逻辑
+
+# ============================================================
+# 联赛参数库 (8联赛已校准)
+# ============================================================
+leagues:
+  挪超:
+    home_boost: 0.20
+    draw_rate: 0.10     # 500.com校准: 29场实际10.3% (v4旧值24%高估14%!)
+    overconf_threshold: 0.55
+    tier: normal
+    note: "L1准确率61.5% Pinnacle准确率64.3% — 挪超信号可靠"
+  瑞超:
+    home_boost: 0.10
+    draw_rate: 0.41
+    overconf_threshold: 0.55
+    tier: high_draw
+  德甲:
+    home_boost: 0.10
+    draw_rate: 0.25     # 历史校准: 918场实际25.4% (v4旧值28%接近)
+    overconf_threshold: 0.65
+    tier: top
+  英超:
+    home_boost: 0.14
+    draw_rate: 0.23     # 历史校准: 1140场实际23.0% (v4旧值29%高估6%)
+    overconf_threshold: 0.65
+    tier: top
+  意甲:
+    home_boost: 0.10
+    draw_rate: 0.28     # 历史校准: 1140场实际28.1% (v4旧值24%低估4%)
+    overconf_threshold: 0.65
+    tier: top
+  西甲:
+    home_boost: 0.15
+    draw_rate: 0.26     # 历史校准: 1140场实际25.7% (v4旧值25%接近)
+    overconf_threshold: 0.65
+    tier: top
+  日职:
+    home_boost: 0.10
+    draw_rate: 0.27
+    overconf_threshold: 0.55
+    tier: normal
+  英甲:
+    home_boost: 0.15
+    draw_rate: 0.27
+    overconf_threshold: 0.55
+    tier: normal
+  解放者杯:
+    home_boost: 0.10
+    draw_rate: 0.29     # 17场校准: 47.1%主/29.4%平/23.5%客
+    overconf_threshold: 0.55
+    tier: normal
+  德乙:
+    home_boost: 0.08
+    draw_rate: 0.40     # 10场校准: 40%主/40%平/20%客
+    overconf_threshold: 0.55
+    tier: normal
+  法乙:
+    home_boost: 0.10
+    draw_rate: 0.21     # 14场校准
+    overconf_threshold: 0.55
+    tier: normal
+  美职:
+    home_boost: 0.15
+    draw_rate: 0.20     # 15场校准: 53.3%主/20%平
+    overconf_threshold: 0.55
+    tier: normal
+  葡超:
+    home_boost: 0.10
+    draw_rate: 0.42     # 12场校准: 葡超高平局率!
+    overconf_threshold: 0.55
+    tier: normal
+  荷甲:
+    home_boost: 0.10
+    draw_rate: 0.62     # 13场校准: 荷甲极高平局率!
+    overconf_threshold: 0.55
+    tier: normal
+
+# 默认联赛参数 (未知联赛使用)
+default_league:
+  home_boost: 0.12
+  draw_rate: 0.21     # 全量433场校准: 未校准联赛实际20.8% (v4旧值25%高估4%)
+  overconf_threshold: 0.55
+  tier: normal
+
+# 已校准联赛 (数据库>=3场)
+calibrated_leagues:
+  - 挪超
+  - 瑞超
+  - 德甲
+  - 英超
+  - 意甲
+  - 西甲
+  - 日职
+  - 英甲
+  - 解放者杯
+  - 德乙
+  - 法乙
+  - 美职
+  - 葡超
+  - 荷甲
+
+# 碰撞#38: 未校准联赛策略——L1是反指(46%), 直接跟Pinnacle方向(55%)
+uncalibrated_strategy: pinnacle_only
+
+# ============================================================
+# L1 层: Pinnacle+亚盘 4条件阈值
+# ============================================================
+l1:
+  range_max: 0.50           # 百家欧赔极差上限
+  prob_gap_min: 0.05        # 主客概率差下限
+  home_prob_max: 0.55       # 主胜概率上限(全局默认, 联赛参数覆盖)
+  eu_ah_agree_required: true # 欧亚一致
+
+  # L1激活后的联赛特殊处理
+  # action: pass = 直接返回单选主胜
+  # action: downgrade = 进入L2消歧(不直接返回)
+  league_override:
+    英超:
+      action: downgrade
+      reason: "英超29%平局率, L1可能过度自信"
+    # 意甲不在此列表 = 使用默认pass
+
+# ============================================================
+# L2 层: 方向翻转 + Smart Money
+# ============================================================
+l2:
+  # 方向翻转: 客强信号
+  away_strong:
+    prob_margin: 0.08       # p_away > p_home + margin
+    odds_clear:              # 或赔率明牌
+      away_max: 2.5         # 客赔 < 2.5
+      home_min: 3.0         # 主赔 > 3.0
+
+  # 极端一致反向
+  extreme_consensus:
+    min_moves: 5            # 最少公司变动数
+    agree_ratio: 0.9        # >90%同向 → 翻方向
+
+  # Deep Smart Money (位置15-19)
+  smart_money:
+    positions: [15, 16, 17, 18, 19]
+    consensus_required: 4   # >=4/5一致
+    odds_clear_overrides: true  # 赔率明牌时不覆盖
+
+  # 动态主场加成
+  home_boost_dynamic:
+    away_gap_factor: 0.25   # 客队每超出此概率差, 加成递减
+    min_boost_ratio: 0.2    # 最小保留20%加成
+
+# ============================================================
+# 消歧规则: 主不败 → 单选平局 (按priority从高到低执行)
+# 命中任一规则→单选平局, 全部未命中→单选主胜(DEFAULT)
+# ============================================================
+home_to_draw:
+  - id: D6
+    priority: 100
+    description: "伤缺>=3人 → 单选平局"
+    condition:
+      injuries_min: 3
+
+  - id: D2
+    priority: 90
+    description: "平局王相遇(双方draw_rate>40%) → 单选平局"
+    condition:
+      draw_specialist: true
+
+  - id: D1
+    priority: 80
+    description: "瑞超联赛(draw_rate=41%) → 单选平局"
+    condition:
+      league: 瑞超
+
+  - id: D3
+    priority: 70
+    description: "Pin vs 亚盘明确对立 + 市场过度自信 → 单选平局"
+    condition:
+      pin_vs_ah: true
+      overconfident: true
+
+  - id: D5
+    priority: 60
+    description: "过度自信 + 市场全线撤退 + 非顶级联赛 → 单选平局"
+    condition:
+      overconfident: true
+      market_retreat: true
+      league_tier_not: top
+
+  - id: D5b
+    priority: 55
+    description: "撤退比例>5:1 + 高平赔 → 单选平局"
+    condition:
+      retreat_ratio_min: 5.0
+      draw_odds_high: true
+
+  - id: D4
+    priority: 50
+    description: "L1激活降级 + 英超 → 单选平局"
+    condition:
+      l1_downgraded: true
+      league: 英超
+
+# ============================================================
+# 消歧规则: 客不败 → 单选平局 (按priority从高到低执行)
+# 命中任一规则→单选平局, 全部未命中→单选客胜(DEFAULT)
+# ============================================================
+away_to_draw:
+  - id: A1
+    priority: 100
+    description: "伤缺>=3人 → 单选平局"
+    condition:
+      injuries_min: 3
+
+  - id: A3
+    priority: 80
+    description: "意甲+势均力敌(德比) → 单选平局"
+    condition:
+      league: 意甲
+      prob_gap_small: true
+
+  - id: A2
+    priority: 70
+    description: "欧亚矛盾+势均力敌 → 单选平局"
+    condition:
+      eu_ah_contradiction: true
+      prob_gap_small: true
+
+# ============================================================
+# 德甲特殊规则 (L1未激活时触发)
+# ============================================================
+bundesliga_special:
+  - condition:
+      w_range_gt: 0.70
+    action: draw
+    reason: "极差>0.70, 市场分歧极大 → 单选平局"
+  - condition:
+      w_range_lte: 0.70
+    action: skip
+    reason: "极差≤0.70, 高市场效率 → 跳过"
+
+# ============================================================
+# 版本追踪
+# ============================================================
+version: "4.1"
+last_collision: "#37-39"
+last_modified: "2026-05-27"
+calibration:
+  source: "Football-Data.co.uk (8821场, Pinnacle赔率)"
+  leagues_calibrated: ["英超(1140场)","德甲(918场)","意甲(1140场)","西甲(1140场)","法甲(992场)"]
+  key_finding: "40-50%概率区间是方向准确率最低谷(42-47%), 势均力敌时Pinnacle方向预测能力最弱"
+  overconf_finding: "80%+概率区间方向准确率仍高达72-91%, 市场在极端概率时并未过度自信"
+accuracy_insample: "31/32=96.9%"
+accuracy_note: "样本内拟合, 需新比赛样本外验证。校准值基于8821场Pinnacle赔率, 非32场手动标注"

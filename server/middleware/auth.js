@@ -1,17 +1,11 @@
 const jwt = require('jsonwebtoken');
 const cfg = require('../config/env');
 
-// JWT 密钥 — 生产环境必须设置，开发环境使用随机密钥
-const SECRET = (() => {
-  if (cfg.JWT_SECRET) return cfg.JWT_SECRET;
-  if (cfg.NODE_ENV === 'production') {
-    console.error('[致命] 生产环境未设置 JWT_SECRET，拒绝启动');
-    process.exit(1);
-  }
-  const fallback = require('crypto').randomBytes(32).toString('hex');
-  console.log('[JWT] 开发模式使用随机密钥，重启后需重新登录');
-  return fallback;
-})();
+// JWT 密钥：统一从 config/env 获取（env.js 负责环境变量+开发回退+生产校验）
+const SECRET = cfg.JWT_SECRET;
+if (cfg.NODE_ENV !== 'production') {
+  console.log('[JWT] 开发模式，重启后需重新登录');
+}
 
 function authRequired(req, res, next) {
   const h = req.headers.authorization;

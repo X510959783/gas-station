@@ -1,11 +1,7 @@
 const router = require('express').Router()
 const pool = require('../../config/db')
 const { adminRequired } = require('../../middleware/auth')
-
-function serverError(res, logMsg) {
-  if (logMsg) console.error('[analysis]', logMsg)
-  return res.status(500).json({ code: 500, message: '服务器内部错误，请稍后重试' })
-}
+const { serverError } = require('../../utils/response')
 
 // 消费排行（手机号脱敏，支持分页）
 router.get('/ranking', adminRequired, async (req, res) => {

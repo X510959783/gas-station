@@ -3,17 +3,13 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const pool = require('../../config/db')
 const cfg = require('../../config/env')
-const SECRET = cfg.JWT_SECRET || require('crypto').randomBytes(32).toString('hex')
+const SECRET = cfg.JWT_SECRET
 const { z } = require('zod')
 const validate = require('../../middleware/validate')
+const { serverError } = require('../../utils/response')
 
 const MAX_FAILURES = 5
 const BLOCK_MINUTES = 15
-
-function serverError(res, logMsg) {
-  if (logMsg) console.error('[admin-login]', logMsg)
-  return res.status(500).json({ code: 500, message: '服务器内部错误，请稍后重试' })
-}
 
 // 登录失败检查 — 基于数据库（进程重启不丢失）
 async function checkLoginBlock(username, ip) {

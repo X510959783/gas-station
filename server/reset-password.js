@@ -22,27 +22,24 @@ async function resetPassword() {
   let conn
   try {
     conn = await mysql.createConnection(DB_CONFIG)
-    console.log('[reset-password] 数据库连接成功')
 
-    // 异步 bcrypt（不阻塞事件循环）
     const hash = await bcrypt.hash(NEW_PASSWORD, 10)
 
     const [rows] = await conn.query('SELECT id, username, real_name FROM admins WHERE username = ?', [ADMIN_USERNAME])
 
     if (rows.length === 0) {
-      console.log(`[reset-password] 账号"${ADMIN_USERNAME}"不存在，正在创建...`)
       await conn.query(
         'INSERT INTO admins (username, password_hash, real_name, role) VALUES (?, ?, ?, ?)',
         [ADMIN_USERNAME, hash, '管理员', 'super_admin']
       )
-      console.log('[reset-password] 账号创建成功')
     } else {
       await conn.query('UPDATE admins SET password_hash = ? WHERE username = ?', [hash, ADMIN_USERNAME])
-      console.log('[reset-password] 密码更新成功')
     }
 
-    // 不输出任何凭据到日志
-    console.log('[reset-password] 用户密码已重置（通过环境变量）')
+    // 生产环境不应输出操作凭据
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[reset-password] 密码重置完成')
+    }
 
   } catch (err) {
     console.error('[reset-password] 操作失败:', err.message)

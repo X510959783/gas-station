@@ -1,10 +1,6 @@
 const router = require('express').Router()
 const pool = require('../../config/db')
-
-function serverError(res, logMsg) {
-  if (logMsg) console.error('[dashboard]', logMsg)
-  return res.status(500).json({ code: 500, message: '服务器内部错误，请稍后重试' })
-}
+const { serverError } = require('../../utils/response')
 
 router.get('/', async (req, res) => {
   try {

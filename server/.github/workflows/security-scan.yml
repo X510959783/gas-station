@@ -1,0 +1,24 @@
+name: 安全扫描
+
+on: [push, pull_request]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: 反模式扫描
+        run: |
+          python3 D:/AI-Knowledge/scripts/code-scanner.py .
+          echo "CRITICAL=$(python3 -c 'import subprocess;r=subprocess.run([\"python3\",\"D:/AI-Knowledge/scripts/code-scanner.py\",\".\"],capture_output=True,text=True);print(r.stdout.count(\"[CRITICAL]\"))')" >> $GITHUB_ENV
+      - name: 依赖审计
+        run: npm audit --audit-level=high
+      - name: 质量门禁
+        run: |
+          if [ "$CRITICAL" -gt 0 ]; then
+            echo "CRITICAL漏洞: $CRITICAL个 — 阻断"
+            exit 1
+          fi
+          echo "安全扫描通过"

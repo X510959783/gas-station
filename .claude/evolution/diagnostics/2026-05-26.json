@@ -1,0 +1,12 @@
+{
+  "date": "2026-05-26",
+  "axes": {
+    "capability_utilization": "24%",
+    "integrity_trend": {"snapshots": 13, "learnings": 5},
+    "confidence_calibration": {"self_check": "41/41"},
+    "stability": {"hooks": 2, "scripts": 9},
+    "generator_critic": "active"
+  },
+  "health": "87%",
+  "pass": 7, "warn": 1, "fail": 0
+}

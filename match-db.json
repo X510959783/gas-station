@@ -1,0 +1,484 @@
+{
+  "matches": [
+    {
+      "id": "1364015",
+      "name": "斯达 vs 瓦勒伦加",
+      "day": "周一",
+      "result": "2-0 (主胜)",
+      "deadline": "2026-05-25 22:00",
+      "cutoff": "2026-05-25 21:30",
+      "saved_at": "2026-05-26T13:35:02.551638",
+      "verdict": "跳过",
+      "scores": {
+        "D1": 0,
+        "D2": 0,
+        "D3": 1,
+        "D4": 0,
+        "D5": 1,
+        "D6": 0,
+        "D6_bonus": 0,
+        "total": 2,
+        "max": 6
+      },
+      "details": {
+        "gap": 0.1,
+        "avg_odds": 2.95,
+        "ah_changes": 1,
+        "d6_strength": "弱",
+        "key_finding": "主任跟随国际,集体误判"
+      },
+      "calibrated": false,
+      "v3_verdict": "单选主胜",
+      "v3_framework": "3.2"
+    },
+    {
+      "id": "1363692",
+      "name": "汉坎 vs 利勒斯特罗姆",
+      "day": "周一",
+      "result": "2-0 (主胜)",
+      "deadline": "2026-05-25 22:00",
+      "cutoff": "2026-05-25 21:30",
+      "saved_at": "2026-05-26T13:35:02.552685",
+      "verdict": "弱信号",
+      "scores": {
+        "D1": 0,
+        "D2": 0,
+        "D3": 1,
+        "D4": 0,
+        "D5": 1,
+        "D6": 1,
+        "D6_bonus": 1,
+        "total": 4,
+        "max": 6
+      },
+      "details": {
+        "gap": -0.53,
+        "avg_odds": 3.47,
+        "ah_changes": 2,
+        "d6_strength": "强",
+        "key_finding": "D6 gap=-0.53 主任拼命压主胜"
+      },
+      "calibrated": false,
+      "v3_verdict": "单选主胜",
+      "v3_framework": "3.2"
+    },
+    {
+      "id": "1363965",
+      "name": "特罗姆瑟 vs 奥勒松",
+      "day": "周一",
+      "result": "1-1 (平局)",
+      "deadline": "2026-05-25 22:00",
+      "cutoff": "2026-05-25 21:30",
+      "saved_at": "2026-05-26T13:35:02.552685",
+      "verdict": "跳过",
+      "scores": {
+        "D1": 0,
+        "D2": 0,
+        "D3": 1,
+        "D4": 0,
+        "D5": 1,
+        "D6": 1,
+        "D6_bonus": 0,
+        "total": 3,
+        "max": 6
+      },
+      "details": {
+        "gap": -0.17,
+        "avg_odds": 1.48,
+        "ah_changes": 245,
+        "d6_strength": "中",
+        "key_finding": "死亡区+245次盘口变化=极度不确定"
+      },
+      "calibrated": false,
+      "v3_verdict": "双选主不败(过度自信)",
+      "v3_framework": "3.2"
+    },
+    {
+      "id": "1364084",
+      "name": "KFUM奥斯陆 vs 罗森博格",
+      "day": "周一",
+      "result": "2-0 (主胜)",
+      "deadline": "2026-05-25 22:00",
+      "cutoff": "2026-05-25 21:30",
+      "saved_at": "2026-05-26T13:39:03.851872",
+      "verdict": "跳过",
+      "scores": {
+        "D1": 0,
+        "D2": 0,
+        "D3": 1,
+        "D4": 0,
+        "D5": 1,
+        "D6": 0,
+        "D6_bonus": 0,
+        "total": 2,
+        "max": 6
+      },
+      "details": {
+        "gap": 0.02,
+        "avg_odds": 2.21,
+        "ah_changes": 4,
+        "d6_strength": "弱",
+        "key_finding": "盘口平半始终不变,仅水位微调,主任跟随市场"
+      },
+      "calibrated": false,
+      "v3_verdict": "单选主胜",
+      "v3_framework": "3.2"
+    },
+    {
+      "id": "1363613",
+      "name": "萨普斯堡 vs 莫尔德",
+      "day": "周一",
+      "result": "2-1 (主胜)",
+      "deadline": "2026-05-25 22:00",
+      "cutoff": "2026-05-25 21:30",
+      "saved_at": "2026-05-26T14:02:58.244811",
+      "verdict": "跳过",
+      "scores": {
+        "D1": 0,
+        "D2": 0,
+        "D3": 1,
+        "D4": 0,
+        "D5": 1,
+        "D6": 0,
+        "D6_bonus": 0,
+        "total": 2,
+        "max": 6
+      },
+      "details": {
+        "gap": 0.07,
+        "avg_odds": 2.52,
+        "ah_changes": 0,
+        "key": "完美分歧22升vs22降"
+      },
+      "calibrated": false,
+      "v3_verdict": "单选主胜",
+      "v3_framework": "3.2"
+    },
+    {
+      "id": "005萨普斯堡",
+      "title": "萨普斯堡 vs 莫尔德",
+      "league": "挪超",
+      "result": "2-1 (主胜)",
+      "verdict": "跳过 (负EV)",
+      "v3_probs": {
+        "home": 0.3683,
+        "draw": 0.26775000000000004,
+        "away": 0.3767
+      },
+      "kelly_home": {
+        "kelly_fraction": -0.0072,
+        "full_kelly": -0.029,
+        "expected_value": -0.0461,
+        "decision": "skip"
+      },
+      "kelly_draw": {
+        "kelly_fraction": -0.0035,
+        "full_kelly": -0.0139,
+        "expected_value": -0.0361,
+        "decision": "skip"
+      },
+      "overround": 0.0761,
+      "v3_verdict": "单选主胜",
+      "v3_framework": "3.2"
+    },
+    {
+      "id": "006哥德堡",
+      "title": "哥德堡 vs 米亚尔比",
+      "league": "瑞超",
+      "result": "1-1 (平局)",
+      "verdict": "跳过 (负EV)",
+      "v3_probs": {
+        "home": 0.379,
+        "draw": 0.30387000000000003,
+        "away": 0.3315
+      },
+      "kelly_home": {
+        "kelly_fraction": -0.0029,
+        "full_kelly": -0.0116,
+        "expected_value": -0.0184,
+        "decision": "skip"
+      },
+      "kelly_draw": {
+        "kelly_fraction": -0.0069,
+        "full_kelly": -0.0276,
+        "expected_value": -0.058,
+        "decision": "skip"
+      },
+      "overround": 0.0769,
+      "v3_verdict": "双选主不败(瑞超高平局)",
+      "v3_framework": "3.2"
+    },
+    {
+      "id": "007埃夫斯堡",
+      "title": "埃夫斯堡 vs 赫根",
+      "league": "瑞超",
+      "result": "1-1 (平局)",
+      "verdict": "可考虑 (正EV)",
+      "v3_probs": {
+        "home": 0.3445,
+        "draw": 0.287175,
+        "away": 0.382
+      },
+      "kelly_home": {
+        "kelly_fraction": 0.0042,
+        "full_kelly": 0.0167,
+        "expected_value": 0.0335,
+        "decision": "bet"
+      },
+      "kelly_draw": {
+        "kelly_fraction": -0.0245,
+        "full_kelly": -0.0981,
+        "expected_value": -0.1816,
+        "decision": "skip"
+      },
+      "overround": 0.0763,
+      "v3_verdict": "单选平局(平局王相遇)",
+      "v3_framework": "3.2"
+    },
+    {
+      "id": "008桑纳菲",
+      "title": "桑纳菲 vs 腓特烈",
+      "league": "挪超",
+      "result": "1-1 (平局)",
+      "verdict": "跳过 (负EV)",
+      "v3_probs": {
+        "home": 0.4415,
+        "draw": 0.27541499999999997,
+        "away": 0.31111500000000003
+      },
+      "kelly_home": {
+        "kelly_fraction": -0.0578,
+        "full_kelly": -0.2314,
+        "expected_value": -0.1921,
+        "decision": "skip"
+      },
+      "kelly_draw": {
+        "kelly_fraction": -0.0022,
+        "full_kelly": -0.0087,
+        "expected_value": -0.0223,
+        "decision": "skip"
+      },
+      "overround": 0.0771,
+      "v3_verdict": "双选主不败(伤缺)",
+      "v3_framework": "3.2"
+    },
+    {
+      "id": "009帕德博恩",
+      "title": "帕德博恩 vs 沃夫斯堡",
+      "league": "德甲",
+      "result": "1-1 (平局)",
+      "verdict": "跳过 (负EV)",
+      "v3_probs": {
+        "home": 0.29924999999999996,
+        "draw": 0.29316000000000003,
+        "away": 0.4357
+      },
+      "kelly_home": {
+        "kelly_fraction": -0.003,
+        "full_kelly": -0.0122,
+        "expected_value": -0.0274,
+        "decision": "skip"
+      },
+      "kelly_draw": {
+        "kelly_fraction": -0.0063,
+        "full_kelly": -0.0252,
+        "expected_value": -0.056,
+        "decision": "skip"
+      },
+      "overround": 0.0621,
+      "v3_verdict": "跳过(德甲高市场效率)",
+      "v3_framework": "3.2"
+    },
+    {
+      "id": "002",
+      "title": "周日002日职05-24 16.00清水鼓动 1.2 大阪钢巴",
+      "league": "日职",
+      "result": "客胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "003",
+      "title": "周日003英甲05-24 20.00博尔顿 4.1 斯托克港",
+      "league": "英甲",
+      "result": "主胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "004",
+      "title": "周日004瑞超05-24 20.00哈马比 1.2 索尔纳",
+      "league": "瑞超",
+      "result": "客胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "005",
+      "title": "周日005瑞超05-24 20.00天狼星 2.1 盖斯",
+      "league": "瑞超",
+      "result": "主胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "006",
+      "title": "周日006意甲05-24 21.00帕尔马 1.0 萨索洛",
+      "league": "意甲",
+      "result": "主胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "007",
+      "title": "周日007挪超05-24 21.00博德闪耀 3.1 布兰",
+      "league": "挪超",
+      "result": "主胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "008",
+      "title": "周日008瑞超05-24 22.30马尔默 2.3 韦斯特罗斯",
+      "league": "瑞超",
+      "result": "客胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "009",
+      "title": "周日009英超 05-24 23.00富勒姆 2.0 纽卡斯尔",
+      "league": "英超",
+      "result": "主胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "010",
+      "title": "周日010英超05-24 23.00利物浦 1.1 布伦特",
+      "league": "英超",
+      "result": "平局",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "011",
+      "title": "周日011英超05-24 23.00曼城 1.2 维拉",
+      "league": "英超",
+      "result": "客胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "013",
+      "title": "周日013英超05-24 23.00伯恩利 1.1 狼队",
+      "league": "英超",
+      "result": "平局",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "014",
+      "title": "周日014英超05-24 23.00水晶宫 1.2 阿森纳",
+      "league": "英超",
+      "result": "客胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "015",
+      "title": "周日015英超05-24 23.00西汉姆联 3.0 利兹联",
+      "league": "英超",
+      "result": "主胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "016",
+      "title": "周日016英超05-24 23.00热刺 1.0 埃弗顿",
+      "league": "英超",
+      "result": "主胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "017",
+      "title": "周日017英超05-24 23.00诺丁汉 1.1 伯恩茅斯",
+      "league": "英超",
+      "result": "平局",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "018",
+      "title": "周日018意甲05-25 00.00那不勒斯 1.0 乌迪内斯",
+      "league": "意甲",
+      "result": "主胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "019",
+      "title": "周日019挪超05-25 00.00克里斯蒂 1.2 维京",
+      "league": "挪超",
+      "result": "客胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "020",
+      "title": "周日020意甲05-25 02.45莱切 1.0 热那亚",
+      "league": "意甲",
+      "result": "主胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "021",
+      "title": "周日021意甲05-25 02.45维罗纳 0.2 罗马",
+      "league": "意甲",
+      "result": "客胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "022",
+      "title": "周日022意甲05-25 02.45都灵 2.2 尤文图斯",
+      "league": "意甲",
+      "result": "平局",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "023",
+      "title": "周日023意甲05-25 02.45克雷莫纳 1.4 科莫",
+      "league": "意甲",
+      "result": "客胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "024",
+      "title": "周日024意甲05-25 02.45AC米兰 1.2 卡利亚里",
+      "league": "意甲",
+      "result": "客胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    },
+    {
+      "id": "025",
+      "title": "周日025西甲05-25 03.00比利亚雷 5.1 马竞",
+      "league": "西甲",
+      "result": "主胜",
+      "source": "D:/足彩/2026.5.24",
+      "batch": "2026-05-24"
+    }
+  ],
+  "stats": {
+    "total": 5,
+    "skipped": 4,
+    "correct": 4,
+    "skip_rate": "80%",
+    "last_updated": "2026-05-26T14:02:58.244811"
+  }
+}

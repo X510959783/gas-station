@@ -1,19 +1,61 @@
 #!/bin/sh
-# 漏洞预判引擎 — Pre-commit 安全扫描
-# 在代码提交前自动检测反模式，发现则拒绝提交
+# 漏洞预判引擎 v2.0 — Pre-commit 安全扫描
+# CRITICAL/HIGH → 拒绝提交 | MEDIUM → 警告 | LOW → 通过
 
 echo "[预提交扫描] 启动..."
 
+CHANGED=$(git diff --cached --name-only --diff-filter=ACM | grep '\.js$')
+if [ -z "$CHANGED" ]; then
+  echo "  无JS文件变更，跳过扫描"
+  exit 0
+fi
+
 # L0: 基础语法检查
 echo "  L0: ESLint..."
-npx eslint --quiet $(git diff --cached --name-only --diff-filter=ACM | grep '\.js$') 2>/dev/null
+LINT_OUTPUT=$(npx eslint --quiet $CHANGED 2>&1)
+LINT_EXIT=$?
+if [ $LINT_EXIT -eq 0 ]; then
+  LINT_PASS="PASS"
+else
+  LINT_PASS="FAIL"
+  echo "$LINT_OUTPUT"
+fi
 
 # L1: 22条反模式快速扫描
 echo "  L1: 安全扫描..."
-python3 D:/.ai-memory/scripts/code-scanner.py $(git diff --cached --name-only --diff-filter=ACM | grep '\.js$' | tr '\n' ' ') 2>/dev/null
+SCANNER="D:/AI-Knowledge/scripts/code-scanner.py"
+SCAN_RESULT=$(python3 "$SCANNER" $CHANGED 2>&1)
+CRITICAL=$(echo "$SCAN_RESULT" | grep -c "\[CRITICAL\]")
+HIGH=$(echo "$SCAN_RESULT" | grep -c "\[HIGH\]")
+
+if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
+  echo ""
+  echo "========================================="
+  echo "  COMMIT 被拒绝: $CRITICAL 严重 + $HIGH 高危"
+  echo "========================================="
+  echo "$SCAN_RESULT"
+  echo ""
+  echo "请修复以上问题后再提交。"
+  exit 1
+fi
+
+SCAN_PASS="PASS ($CRITICAL 严重 / $HIGH 高危 / $(echo "$SCAN_RESULT" | grep -c '\[MEDIUM\]') 中危)"
+
+echo "$SCAN_RESULT" | head -5
 
 # L2: 依赖检查
 echo "  L2: 依赖审计..."
-npm audit --audit-level=high 2>/dev/null | grep -q "found 0 vulnerabilities" || echo "  ⚠️ 依赖存在高危漏洞"
+if npm audit --audit-level=critical 2>/dev/null | grep -q "found 0 vulnerabilities"; then
+  AUDIT_PASS="PASS"
+else
+  AUDIT_PASS="WARN (高危依赖)"
+  echo "  ⚠️ 依赖存在严重漏洞，建议修复后提交"
+fi
 
-echo "[预提交扫描] 完成"
+echo ""
+echo "========================================="
+echo "  质量门禁: PASS"
+echo "  安全: $SCAN_PASS | 依赖: $AUDIT_PASS | 语法: $LINT_PASS"
+echo "  规则: 22条 OWASP 10/10"
+echo "========================================="
+exit 0

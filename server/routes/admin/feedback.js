@@ -3,7 +3,10 @@ const pool = require('../../config/db')
 
 router.get('/', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT id, user_id, content, contact, status, reply, created_at FROM feedbacks ORDER BY created_at DESC LIMIT 100')
+    const page = Math.max(1, parseInt(req.query.page) || 1)
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20))
+    const offset = (page - 1) * limit
+    const [rows] = await pool.query('SELECT id, user_id, content, contact, status, reply, created_at FROM feedbacks ORDER BY created_at DESC LIMIT ? OFFSET ?', [limit, offset])
     res.json({ code: 0, data: rows })
   } catch (e) {
     console.error('[admin-feedback] 列表失败:', e.message)

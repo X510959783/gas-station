@@ -1,0 +1,36 @@
+name: CI — 代码安全扫描
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  code-scanner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install server dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Run code scanner
+        run: |
+          python3 D:/AI-Knowledge/scripts/code-scanner.py server
+
+      - name: Check for CRITICAL/HIGH
+        run: |
+          OUTPUT=$(python3 D:/AI-Knowledge/scripts/code-scanner.py server 2>&1)
+          echo "$OUTPUT"
+          if echo "$OUTPUT" | grep -qE '\[CRITICAL\]|\[HIGH\]'; then
+            echo "❌ CRITICAL/HIGH 问题被拦截"
+            exit 1
+          fi
+          echo "✅ 安全扫描通过"

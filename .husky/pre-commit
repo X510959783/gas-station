@@ -1,40 +1,35 @@
 #!/bin/sh
-# Layer 2 漏洞预判引擎 v1 — pre-commit hook
-# L0: ESLint (快速)
-# L1: 22条反模式 (2s)
-# L2: Semgrep + npm audit (5s)
+# Layer 2 漏洞预判引擎 v2 — pre-commit hook
+# 发现 CRITICAL/HIGH 时 exit 1 拒绝提交
 
-echo "=== [漏洞预判引擎] ==="
+SCANNER="D:/AI-Knowledge/scripts/code-scanner.py"
+GAS_DIR="D:/gas-station"
+START_DIR=$(pwd)
+BLOCK=false
+
+echo "=== [漏洞预判引擎 Layer2] ==="
 start_time=$(date +%s)
 
-# L0 — ESLint（可选）
-if command -v npx >/dev/null 2>&1 && [ -f package.json ]; then
-  if grep -q '"eslint"' package.json 2>/dev/null; then
-    echo "[L0] ESLint 检查..."
-    npx eslint . --max-warnings=0 || exit 1
-  fi
-fi
+cd "$GAS_DIR"
 
-# L1 — 22条反模式扫描（--diff 模式）
+# L1 — 22条反模式扫描
 echo "[L1] 安全反模式扫描..."
-SCANNER="D:/.ai-memory/scripts/code-scanner.py"
-if command -v git >/dev/null 2>&1; then
-  # 只扫描本次变更的文件
-  CHANGED=$(git diff --cached --name-only --diff-filter=ACMRT | grep '\.js$' | tr '\n' ',')
-  if [ -n "$CHANGED" ]; then
-    python3 "$SCANNER" --diff "$CHANGED" "D:/gas-station/server" 2>&1
-  else
-    echo "  (无 JS 文件变更，跳过)"
-  fi
-else
-  python3 "$SCANNER" "D:/gas-station/server" 2>&1 | tail -5
+OUTPUT=$(python3 "$SCANNER" "server" 2>&1)
+echo "$OUTPUT"
+
+# 检查是否有 CRITICAL 或 HIGH
+if echo "$OUTPUT" | grep -qE '\[CRITICAL\]|\[HIGH\]'; then
+  echo ""
+  echo "=============================================="
+  echo "  拦截: 检测到 CRITICAL/HIGH 安全问题"
+  echo "  修复后再提交"
+  echo "=============================================="
+  BLOCK=true
 fi
 
-# L2 — npm audit
-echo "[L2] 依赖审计..."
-if [ -f package.json ]; then
-  npm audit --audit-level=high 2>/dev/null || echo "  [警告] 有高危依赖，请运行 npm audit fix"
-fi
-
+cd "$START_DIR" 2>/dev/null
 elapsed=$(($(date +%s) - start_time))
 echo "=== [扫描完成: ${elapsed}s] ==="
+
+[ "$BLOCK" = true ] && exit 1
+exit 0

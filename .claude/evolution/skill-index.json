@@ -1,0 +1,60 @@
+{
+  "version": "1.0.0",
+  "built": "2026-05-26",
+  "total_skills": 3397,
+  "indexed": 175,
+  "indexes": {
+    "by_scenario": {
+      "write_python": ["python-design-patterns","clean-code","python-type-safety","python-code-style","python-error-handling","python-resource-management","python-testing-patterns","logic-lens"],
+      "fix_bug": ["diagnose","bug-hunter","phase-gated-debugging","rca-methodology","test-first-bugs","fix-review","ai-regression-testing"],
+      "review_code": ["code-review-excellence","logic-lens","find-bugs","pr-review","security-review","refactoring-catalog"],
+      "security_audit": ["security-threat-model","api-security-testing","auth-implementation-patterns","secrets-management","security-scan","threat-mitigation-mapping","vulnerability-patterns"],
+      "make_decision": ["premortem","argumentation-framework","logical-fallacy-detector","rice-prioritizer","estimate-calibrator","decision-trigger-mapper"],
+      "learn_from_mistake": ["memory-extractor","dream-memory","structured-context-compressor","evolve.sh learn","self-audit.sh"],
+      "betting_analysis": ["exploratory-data-analysis","data-transform","statistical-analysis","timesfm-forecasting","pymc-bayesian-modeling","sensitivity-analysis","hypothesis-generation","data-storytelling"],
+      "claim_complete": ["verification-gate","verification-before-completion","self_check.py","manuscript-provenance"]
+    },
+    "by_trigger_word": {
+      "分析": ["exploratory-data-analysis","statistical-analysis","sensitivity-analysis"],
+      "修复": ["diagnose","bug-hunter","phase-gated-debugging","rca-methodology"],
+      "bug": ["diagnose","bug-hunter","phase-gated-debugging","test-first-bugs"],
+      "安全": ["security-threat-model","api-security-testing","vulnerability-patterns"],
+      "完成了": ["verification-gate","verification-before-completion"],
+      "通过了": ["verification-gate","verification-before-completion"],
+      "好了": ["verification-gate","self_check.py"],
+      "决策": ["premortem","rice-prioritizer","argumentation-framework"],
+      "选哪个": ["rice-prioritizer","estimate-calibrator","argumentation-framework"],
+      "装skill": ["check-skills.sh"],
+      "安装": ["check-skills.sh"],
+      "审查": ["pr-review","code-review-excellence","logic-lens"],
+      "review": ["pr-review","code-review-excellence","find-bugs"],
+      "类型": ["python-type-safety","zod-validation-expert"],
+      "数据库": ["database-design","sql-optimization-patterns","query-optimization-catalog"],
+      "API": ["api-design-principles","rest-api-conventions","api-docs-generator"],
+      "测试": ["python-testing-patterns","test-design-patterns","test-first-bugs"],
+      "文档": ["documentation","readme","api-docs-generator"],
+      "上下文": ["structured-context-compressor","context-degradation","context-compression"],
+      "记忆": ["memory-extractor","dream-memory","mesh-memory"],
+      "进化": ["evolve.sh","self-audit.sh","dream-memory"]
+    },
+    "by_chain": {
+      "analysis": ["exploratory-data-analysis","data-transform","statistical-analysis","timesfm-forecasting","pymc-bayesian-modeling","sensitivity-analysis","hypothesis-generation","data-storytelling"],
+      "coding": ["clean-code","logic-lens","python-design-patterns","python-type-safety","python-testing-patterns","verification-gate","pr-review"],
+      "fix": ["diagnose","bug-hunter","rca-methodology","phase-gated-debugging","test-first-bugs","fix-review","ai-regression-testing"],
+      "security": ["security-threat-model","api-security-testing","auth-implementation-patterns","secrets-management","security-scan","threat-mitigation-mapping"],
+      "thinking": ["premortem","argumentation-framework","logical-fallacy-detector","rice-prioritizer","estimate-calibrator","decision-trigger-mapper"],
+      "evolution": ["memory-extractor","dream-memory","structured-context-compressor","self_check.py","evolve.sh snapshot"],
+      "autonomous": ["swarm-coordinator","dispatching-parallel-agents","data-storytelling","manuscript-provenance","evolve.sh metrics"]
+    },
+    "by_layer": {
+      "analysis_layer": ["premortem","research-critique","logical-fallacy-detector","estimate-calibrator","argumentation-framework","hypothesis-generation","scientific-critical-thinking"],
+      "implementation_layer": ["python-design-patterns","clean-code","python-type-safety","python-code-style","python-error-handling","python-resource-management","python-testing-patterns","logic-lens","nodejs-best-practices","nodejs-backend-patterns"],
+      "verification_layer": ["verification-gate","pr-review","find-bugs","code-review-excellence","manuscript-provenance","self_check.py","output-pipeline.sh"]
+    }
+  },
+  "query": {
+    "description": "查询优化——先命中场景索引(50个)→再精确匹配(1-5个)",
+    "example": "用户说'修复bug'→by_scenario.fix_bug→返回7个精确匹配",
+    "fallback": "场景不匹配→用by_trigger_word模糊匹配→仍不匹配→全目录grep"
+  }
+}

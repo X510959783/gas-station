@@ -7,13 +7,8 @@ const { z } = require('zod')
 const validate = require('../middleware/validate')
 const { serverError } = require('../utils/response')
 
-// JWT 密钥：从环境变量读取（与 middleware/auth 共用同一来源，但独立获取）
-const cfg = require('../config/env')
-const SECRET = cfg.JWT_SECRET || require('crypto').randomBytes(32).toString('hex')
-if (!cfg.JWT_SECRET && cfg.NODE_ENV === 'production') {
-  console.error('[auth] 生产环境必须设置 JWT_SECRET 环境变量')
-  process.exit(1)
-}
+// JWT 密钥：统一从 config/env 获取（所有模块共享同一密钥）
+const { JWT_SECRET: SECRET } = require('../config/env')
 
 // 微信登录 - 生产环境调用微信接口，开发环境用 mock
 router.post('/wx-login', validate({ body: z.object({ code: z.string().optional() }) }), async (req, res) => {
@@ -35,7 +30,7 @@ router.post('/wx-login', validate({ body: z.object({ code: z.string().optional()
       rows = newUser
     }
     const user = rows[0]
-    const token = jwt.sign({ id: user.id }, SECRET, { expiresIn: '30d' })
+    const token = jwt.sign({ id: user.id, iat: Math.floor(Date.now() / 1000) }, SECRET, { expiresIn: '7d' })
     res.json({ code: 0, data: { token, is_verified: user.is_verified, user: { id: user.id, nickname: user.nickname } } })
   } catch (e) { return serverError(res, 'wx-login 失败: ' + e.message, 'auth') }
 })

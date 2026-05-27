@@ -1,8 +1,13 @@
 const router = require('express').Router();
 const pool = require('../config/db');
+const { z } = require('zod')
+const validate = require('../middleware/validate')
 const { authRequired } = require('../middleware/auth');
-
 const { serverError } = require('../utils/response')
+
+const myCouponsSchema = z.object({
+  status: z.enum(['unused', 'used', 'expired']).optional(),
+})
 
 // 可领取的优惠券
 router.get('/available', authRequired, async (req, res) => {
@@ -17,7 +22,7 @@ router.get('/available', authRequired, async (req, res) => {
 // 领取优惠券（事务保护，防止竞态重复领取）
 router.post('/:couponId/receive', authRequired, async (req, res) => {
   const cid = parseInt(req.params.couponId);
-  if (!Number.isInteger(cid) || cid <= 0) return res.status(400).json({ code: 400, message: '优惠券 ID 无效' })
+  if (Number.isNaN(cid) || cid <= 0) return res.status(400).json({ code: 400, message: '优惠券 ID 无效' })
   const conn = await pool.getConnection()
   try {
     await conn.beginTransaction()
@@ -44,12 +49,8 @@ router.post('/:couponId/receive', authRequired, async (req, res) => {
 });
 
 // 我的优惠券
-router.get('/my', authRequired, async (req, res) => {
+router.get('/my', authRequired, validate({ query: myCouponsSchema }), async (req, res) => {
   const { status } = req.query;
-  const allowedStatuses = ['unused', 'used', 'expired']
-  if (status && !allowedStatuses.includes(status)) {
-    return res.status(400).json({ code: 400, message: 'status 参数无效' })
-  }
   let sql = 'SELECT uc.*, c.name, c.type, c.value, c.min_amount, c.end_time FROM user_coupons uc JOIN coupons c ON uc.coupon_id=c.id WHERE uc.user_id=?';
   const params = [req.user.id];
   if (status) { sql += ' AND uc.status=?'; params.push(status); }

@@ -1,0 +1,27 @@
+{
+  "time": "2026-05-25T20:58:18.321Z",
+  "file": "auth.js",
+  "filePath": "server/routes/auth.js",
+  "lint": {
+    "pass": true
+  },
+  "tests": {
+    "pass": true,
+    "detail": "Tests:       15 passed, 15 total"
+  },
+  "memory": {
+    "lessons": 6
+  },
+  "db": {
+    "available": true,
+    "issues": []
+  },
+  "testQuality": {
+    "universalFrames": 194,
+    "total": 233,
+    "ratio": 83
+  },
+  "dbIssues": [],
+  "riskLevel": "ok",
+  "allPass": true
+}

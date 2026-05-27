@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "autonomous-skill": {
+      "source": "feiskyer/claude-code-settings",
+      "sourceType": "github",
+      "skillPath": "skills/autonomous-skill/SKILL.md",
+      "computedHash": "8a5b92cf1d608e6adbb166cceada54fc6cb70e24346fd0c4bb0b5fe9f5c3cfee"
+    },
+    "dex": {
+      "source": "dcramer/dex",
+      "sourceType": "github",
+      "skillPath": "plugins/dex/skills/dex/SKILL.md",
+      "computedHash": "72de8a6a2d8d5647be7d8b0849b2c46b245477074405d915d1156ab57f15a3f8"
+    },
+    "dex-plan": {
+      "source": "dcramer/dex",
+      "sourceType": "github",
+      "skillPath": "plugins/dex/skills/dex-plan/SKILL.md",
+      "computedHash": "e668f6edc0c5547461cfcae7057cbd2a417b417230c1145465b559a777b4494e"
+    },
+    "workflow-execute": {
+      "source": "catlog22/claude-code-workflow",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/workflow-execute/SKILL.md",
+      "computedHash": "20f680e45cdb401a6b28f7e4eec1ef2b28ebae7e4c9a75fd093893262dc0c043"
+    }
+  }
+}

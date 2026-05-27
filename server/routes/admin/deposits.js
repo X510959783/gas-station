@@ -1,11 +1,7 @@
 const router = require('express').Router()
 const pool = require('../../config/db')
 const opLog = require('../../middleware/opLog')
-
-function serverError(res, logMsg) {
-  if (logMsg) console.error('[deposits]', logMsg)
-  return res.status(500).json({ code: 500, message: '服务器内部错误，请稍后重试' })
-}
+const { serverError } = require('../../utils/response')
 
 router.get('/', async (req, res) => {
   const { status, page: p, pageSize: ps } = req.query

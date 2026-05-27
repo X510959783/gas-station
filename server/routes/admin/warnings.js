@@ -2,13 +2,9 @@ const router = require('express').Router()
 const pool = require('../../config/db')
 const { adminRequired } = require('../../middleware/auth')
 const opLog = require('../../middleware/opLog')
+const { serverError } = require('../../utils/response')
 
 router.use(adminRequired)
-
-function serverError(res, logMsg) {
-  if (logMsg) console.error('[admin-warnings]', logMsg)
-  return res.status(500).json({ code: 500, message: '服务器内部错误，请稍后重试' })
-}
 
 router.get('/', async (req, res) => {
   const { level, status } = req.query
@@ -16,7 +12,11 @@ router.get('/', async (req, res) => {
   const params = []
   if (level) { sql += ' AND w.level=?'; params.push(level) }
   if (status) { sql += ' AND w.status=?'; params.push(status) }
-  sql += ' ORDER BY w.created_at DESC LIMIT 100'
+  const page = Math.max(1, parseInt(req.query.page) || 1)
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20))
+  const offset = (page - 1) * limit
+  sql += ' ORDER BY w.created_at DESC LIMIT ? OFFSET ?'
+  params.push(limit, offset)
   try {
     const [rows] = await pool.query(sql, params)
     res.json({ code: 0, data: rows })

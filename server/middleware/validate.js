@@ -1,7 +1,9 @@
 /**
- * Zod 校验中间件生成器
- * 使用：validate({ body: schema, query: schema, params: schema })
+ * Zod 校验中间件生成器 — 使用：validate({ body: schema, query: schema, params: schema })
+ * 校验失败 → next(ValidationError) → 全局错误处理 → RFC 9457 响应
  */
+const { ValidationError } = require('../utils/errors')
+
 function validate(schemas) {
   return (req, res, next) => {
     const errors = []
@@ -10,17 +12,17 @@ function validate(schemas) {
       if (schema) {
         const result = schema.safeParse(req[field])
         if (!result.success) {
-          errors.push(...result.error.errors.map(e => ({
+          errors.push(...result.error.issues.map(e => ({
             field: `${field}.${e.path.join('.')}`,
             message: e.message,
           })))
-        } else {
-          req[field] = result.data // 替换为校验/转换后的数据
+        } else if (result.data !== undefined) {
+          req[field] = result.data
         }
       }
     }
     if (errors.length) {
-      return res.status(400).json({ code: 400, message: '参数校验失败', errors })
+      return next(new ValidationError(errors))
     }
     next()
   }

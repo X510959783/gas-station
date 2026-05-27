@@ -1,0 +1,745 @@
+{
+  "built": "2026-05-25T17:42:27.732Z",
+  "totalEntries": 39,
+  "lessons": 31,
+  "patterns": 8,
+  "entries": [
+    {
+      "type": "lesson",
+      "title": "先审计再判",
+      "detail": "不要在没数清代码的情况下推荐方案。安全中间件：先推正则拦截，全仓审计后推翻自己。",
+      "text": "- **先审计再判** — 不要在没数清代码的情况下推荐方案。安全中间件：先推正则拦截，全仓审计后推翻自己。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "Zod v4 API 变更",
+      "detail": "errors → issues。升级依赖后必须检查所有 safeParse 调用点。",
+      "text": "- **Zod v4 API 变更** — errors → issues。升级依赖后必须检查所有 safeParse 调用点。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "logger 工厂 vs 单例",
+      "detail": "导出函数需要静态方法时，在函数对象上挂载。mock 和实现必须接口一致。",
+      "text": "- **logger 工厂 vs 单例** — 导出函数需要静态方法时，在函数对象上挂载。mock 和实现必须接口一致。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "Scheduled Task + cmd 是定时炸弹",
+      "detail": "Gateway 3 次崩溃根因。Windows 后台用 Start-Process -WindowStyle Hidden。",
+      "text": "- **Scheduled Task + cmd 是定时炸弹** — Gateway 3 次崩溃根因。Windows 后台用 Start-Process -WindowStyle Hidden。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "mock 数据形状决定测试质量",
+      "detail": "区分 SELECT/INSERT/UPDATE/COUNT 返回不同形状。",
+      "text": "- **mock 数据形状决定测试质量** — 区分 SELECT/INSERT/UPDATE/COUNT 返回不同形状。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "不用 cron 驱动进化",
+      "detail": ".ai-memory 97000 轮自循环教训。老板触发唯一可靠。",
+      "text": "- **不用 cron 驱动进化** — .ai-memory 97000 轮自循环教训。老板触发唯一可靠。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "DB 连接池 queueLimit 不能是 0",
+      "detail": "无限队列会在高并发时耗尽内存。",
+      "text": "- **DB 连接池 queueLimit 不能是 0** — 无限队列会在高并发时耗尽内存。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "OWASP 2026 新增两项",
+      "detail": "供应链风险 + 基础设施安全。Agentic AI 加速了 BOLA 攻击（AI 能自动枚举对象 ID）。",
+      "text": "- **OWASP 2026 新增两项** — 供应链风险 + 基础设施安全。Agentic AI 加速了 BOLA 攻击（AI 能自动枚举对象 ID）。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "行业已从 Prompt Engineering → Context Engineering → Harness Engineering",
+      "detail": "2026 的关键不是更好的 prompt，是验证环+护栏+可观测性。",
+      "text": "- **行业已从 Prompt Engineering → Context Engineering → Harness Engineering** — 2026 的关键不是更好的 prompt，是验证环+护栏+可观测性。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "pool.execute() 比 pool.query() 更安全",
+      "detail": "execute() 强制 prepared statement，MySQL 端缓存执行计划，双赢。当前全仓用 query()，可以升级。",
+      "text": "- **pool.execute() 比 pool.query() 更安全** — execute() 强制 prepared statement，MySQL 端缓存执行计划，双赢。当前全仓用 query()，可以升级。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "BOLA 是逻辑漏洞，扫描器检测不到",
+      "detail": "需要在数据层强制所有权过滤（`AND user_id = ?`）。当前代码已做，这是正确的。",
+      "text": "- **BOLA 是逻辑漏洞，扫描器检测不到** — 需要在数据层强制所有权过滤（`AND user_id = ?`）。当前代码已做，这是正确的。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "指标不是进化",
+      "detail": "20+ 个追踪项不如 6 条真实教训。",
+      "text": "- **指标不是进化** — 20+ 个追踪项不如 6 条真实教训。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "技能文件是持久化知识",
+      "detail": "项目专属 SKILL.md 让下次会话直接加载。",
+      "text": "- **技能文件是持久化知识** — 项目专属 SKILL.md 让下次会话直接加载。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "权限问题别等老板说",
+      "detail": "Bash(*) 比逐个添加命令省心（纠正重复了 2 次）。",
+      "text": "- **权限问题别等老板说** — Bash(*) 比逐个添加命令省心（纠正重复了 2 次）。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "Zod 替代手动校验",
+      "detail": "`parseInt() + if (!field)` 不如 `z.coerce.number().int().positive()`。Zod 一次搞定类型转换+校验+默认值+错误消息。",
+      "text": "- **Zod 替代手动校验** — `parseInt() + if (!field)` 不如 `z.coerce.number().int().positive()`。Zod 一次搞定类型转换+校验+默认值+错误消息。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "z.coerce 是 query 参数的标准做法",
+      "detail": "query string 永远是字符串，z.coerce.number() 在一次调用中完成 parse+validate。",
+      "text": "- **z.coerce 是 query 参数的标准做法** — query string 永远是字符串，z.coerce.number() 在一次调用中完成 parse+validate。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "JWT 30 天过期是安全隐患",
+      "detail": "改为 7 天。标准做法是 15-30 分钟 access token + refresh token rotation，但对微信小程序需要权衡便利性。",
+      "text": "- **JWT 30 天过期是安全隐患** — 改为 7 天。标准做法是 15-30 分钟 access token + refresh token rotation，但对微信小程序需要权衡便利性。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "18 个路由文件中 11 个没有输入校验",
+      "detail": "手动字段检查不等于 schema 校验。Zod 阻止 mass assignment（未声明的字段被自动丢弃），手动检查做不到。",
+      "text": "- **18 个路由文件中 11 个没有输入校验** — 手动字段检查不等于 schema 校验。Zod 阻止 mass assignment（未声明的字段被自动丢弃），手动检查做不到。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "BOLA 防护靠数据层",
+      "detail": "当前代码正确（`AND user_id = ?`），但缺少系统性审计。",
+      "text": "- **BOLA 防护靠数据层** — 当前代码正确（`AND user_id = ?`），但缺少系统性审计。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "Zod v4 新增 `z.email()` / `z.uuid()` / `z.url()` 等 primitive 校验器",
+      "detail": "比 `z.string().email()` 更简洁。",
+      "text": "- **Zod v4 新增 `z.email()` / `z.uuid()` / `z.url()` 等 primitive 校验器** — 比 `z.string().email()` 更简洁。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "Refresh token rotation with reuse detection 是 2026 金标准",
+      "detail": "被偷的 refresh token 变成检测信号而非有效凭证。",
+      "text": "- **Refresh token rotation with reuse detection 是 2026 金标准** — 被偷的 refresh token 变成检测信号而非有效凭证。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "行为规则比知识规则更难内化",
+      "detail": "5 条 R 规则是\"知道什么\"，B1/B2 是\"做什么\"。知道和做到之间的差距只能靠强制检查清单缩小。",
+      "text": "- **行为规则比知识规则更难内化** — 5 条 R 规则是\"知道什么\"，B1/B2 是\"做什么\"。知道和做到之间的差距只能靠强制检查清单缩小。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "Obsidian 对接零成本",
+      "detail": "换 wiki-link 格式 + frontmatter，51 个文件 15 个核心文件加别名，30 秒搞定。对接的本质不是装工具，是统一引用格式。",
+      "text": "- **Obsidian 对接零成本** — 换 wiki-link 格式 + frontmatter，51 个文件 15 个核心文件加别名，30 秒搞定。对接的本质不是装工具，是统一引用格式。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "B6: 选 `uncaughtException` + `unhandledRejection` 全局处理器 而非 在每个路由里单独处理",
+      "detail": "集中处理比分散处理更可靠（不会漏），且成本更低（2 个 handler vs 38 个 try/catch）",
+      "text": "- **B6: 选 `uncaughtException` + `unhandledRejection` 全局处理器 而非 在每个路由里单独处理** — 集中处理比分散处理更可靠（不会漏），且成本更低（2 个 handler vs 38 个 try/catch）",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "思维宪法是能力的放大器",
+      "detail": "同样模型 + C1→C6 思维框架 = 系统性问题解决能力。Constitutional Prompting 的核心洞察：约束编码在生成之前，不是补在生成之后。",
+      "text": "- **思维宪法是能力的放大器** — 同样模型 + C1→C6 思维框架 = 系统性问题解决能力。Constitutional Prompting 的核心洞察：约束编码在生成之前，不是补在生成之后。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "RFC 9457 错误格式是 2026 行业标准",
+      "detail": "Stripe/GitHub/Cloudflare 都用这套。`type` + `title` + `status` + `detail` + `instance` 五字段，客户端不需要猜错误类型。",
+      "text": "- **RFC 9457 错误格式是 2026 行业标准** — Stripe/GitHub/Cloudflare 都用这套。`type` + `title` + `status` + `detail` + `instance` 五字段，客户端不需要猜错误类型。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "AppError 类体系让错误处理变简单",
+      "detail": "ValidationError → 422、NotFoundError → 404、AuthError → 401。`throw new NotFoundError('用户', id)` 替代 `res.status(404).json({...})`。",
+      "text": "- **AppError 类体系让错误处理变简单** — ValidationError → 422、NotFoundError → 404、AuthError → 401。`throw new NotFoundError('用户', id)` 替代 `res.status(404).json({...})`。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "validate 中间件改为 next(err) 模式",
+      "detail": "由全局错误处理器统一格式化，不再在中间件里直接 res.json()。错误处理集中化 = 格式统一 + 日志统一。",
+      "text": "- **validate 中间件改为 next(err) 模式** — 由全局错误处理器统一格式化，不再在中间件里直接 res.json()。错误处理集中化 = 格式统一 + 日志统一。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "向后兼容很重要",
+      "detail": "`serverError()` 保留原接口，内部委托给 `errors.js`。63 处调用点零改动，测试全过。",
+      "text": "- **向后兼容很重要** — `serverError()` 保留原接口，内部委托给 `errors.js`。63 处调用点零改动，测试全过。",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "新建 `utils/errors.js`",
+      "detail": "7 个错误类 + serverError 函数，所有 API 错误响应现在都是 RFC 9457 格式",
+      "text": "- **新建 `utils/errors.js`** — 7 个错误类 + serverError 函数，所有 API 错误响应现在都是 RFC 9457 格式",
+      "source": "lessons.md"
+    },
+    {
+      "type": "lesson",
+      "title": "全局错误处理器升级",
+      "detail": "区分 AppError（返回 422/401/403/404/409）和未知错误（记录堆栈 + 返回 500 安全消息）",
+      "text": "- **全局错误处理器升级** — 区分 AppError（返回 422/401/403/404/409）和未知错误（记录堆栈 + 返回 500 安全消息）",
+      "source": "lessons.md"
+    },
+    {
+      "type": "pattern",
+      "title": "# 模式库",
+      "detail": "> 从教训中提炼的重复模式。每个模式有触发条件——下次遇到自动命中。",
+      "source": "patterns.md"
+    },
+    {
+      "type": "pattern",
+      "title": "依赖升级后的 API 审计",
+      "detail": "npm install 或 package.json 出现版本号变更",
+      "source": "patterns.md"
+    },
+    {
+      "type": "pattern",
+      "title": "Windows 后台进程的正确姿势",
+      "detail": "需要在 Windows 上跑持久的后台 Node 进程",
+      "source": "patterns.md"
+    },
+    {
+      "type": "pattern",
+      "title": "mock 的智能分发",
+      "detail": "写数据库 mock",
+      "source": "patterns.md"
+    },
+    {
+      "type": "pattern",
+      "title": "DB 连接池不能无限排队",
+      "detail": "创建或审查 mysql2/pg 连接池配置",
+      "source": "patterns.md"
+    },
+    {
+      "type": "pattern",
+      "title": "错误响应必须统一格式",
+      "detail": "新增路由、重构错误处理、API 返回错误给客户端",
+      "source": "patterns.md"
+    },
+    {
+      "type": "pattern",
+      "title": "BOLA 防护靠数据层过滤",
+      "detail": "审查 API 路由或写新的 CRUD 端点",
+      "source": "patterns.md"
+    },
+    {
+      "type": "pattern",
+      "title": "正则防御是死路",
+      "detail": "有人提出用正则/黑名单做安全拦截",
+      "source": "patterns.md"
+    }
+  ],
+  "keywords": [
+    "access",
+    "agentic",
+    "ai",
+    "and",
+    "api",
+    "apperror",
+    "assignment",
+    "autherror",
+    "bash",
+    "bola",
+    "catch",
+    "cloudflare",
+    "cmd",
+    "coerce",
+    "constitutional",
+    "context",
+    "count",
+    "cron",
+    "crud",
+    "db",
+    "detail",
+    "detection",
+    "email",
+    "engineering",
+    "err",
+    "errors",
+    "execute",
+    "field",
+    "frontmatter",
+    "gateway",
+    "github",
+    "handler",
+    "harness",
+    "hidden",
+    "id",
+    "if",
+    "insert",
+    "install",
+    "instance",
+    "int",
+    "issues",
+    "js",
+    "json",
+    "jwt",
+    "link",
+    "logger",
+    "mass",
+    "md",
+    "memory",
+    "mock",
+    "mysql",
+    "new",
+    "next",
+    "node",
+    "notfounderror",
+    "npm",
+    "number",
+    "obsidian",
+    "owasp",
+    "package",
+    "parse",
+    "parseint",
+    "pg",
+    "pool",
+    "positive",
+    "prepared",
+    "primitive",
+    "process",
+    "prompt",
+    "prompting",
+    "query",
+    "queuelimit",
+    "refresh",
+    "res",
+    "reuse",
+    "rfc",
+    "rotation",
+    "safeparse",
+    "scheduled",
+    "schema",
+    "select",
+    "servererror",
+    "skill",
+    "start",
+    "statement",
+    "status",
+    "string",
+    "stripe",
+    "task",
+    "throw",
+    "title",
+    "token",
+    "try",
+    "type",
+    "uncaughtexception",
+    "unhandledrejection",
+    "update",
+    "url",
+    "utils",
+    "uuid",
+    "validate",
+    "validationerror",
+    "vs",
+    "wiki",
+    "windows",
+    "windowstyle",
+    "with",
+    "zod"
+  ],
+  "keywordMap": {
+    "zod": [
+      "Zod v4 API 变更",
+      "Zod 替代手动校验",
+      "18 个路由文件中 11 个没有输入校验",
+      "Zod v4 新增 `z.email()` / `z.uuid()` / `z.url()` 等 primitive 校验器"
+    ],
+    "api": [
+      "Zod v4 API 变更",
+      "新建 `utils/errors.js`",
+      "依赖升级后的 API 审计",
+      "错误响应必须统一格式",
+      "BOLA 防护靠数据层过滤"
+    ],
+    "errors": [
+      "Zod v4 API 变更",
+      "向后兼容很重要",
+      "新建 `utils/errors.js`"
+    ],
+    "issues": [
+      "Zod v4 API 变更"
+    ],
+    "safeparse": [
+      "Zod v4 API 变更"
+    ],
+    "logger": [
+      "logger 工厂 vs 单例"
+    ],
+    "vs": [
+      "logger 工厂 vs 单例",
+      "B6: 选 `uncaughtException` + `unhandledRejection` 全局处理器 而非 在每个路由里单独处理"
+    ],
+    "mock": [
+      "logger 工厂 vs 单例",
+      "mock 数据形状决定测试质量",
+      "mock 的智能分发"
+    ],
+    "scheduled": [
+      "Scheduled Task + cmd 是定时炸弹"
+    ],
+    "task": [
+      "Scheduled Task + cmd 是定时炸弹"
+    ],
+    "cmd": [
+      "Scheduled Task + cmd 是定时炸弹"
+    ],
+    "gateway": [
+      "Scheduled Task + cmd 是定时炸弹"
+    ],
+    "windows": [
+      "Scheduled Task + cmd 是定时炸弹",
+      "Windows 后台进程的正确姿势"
+    ],
+    "start": [
+      "Scheduled Task + cmd 是定时炸弹"
+    ],
+    "process": [
+      "Scheduled Task + cmd 是定时炸弹"
+    ],
+    "windowstyle": [
+      "Scheduled Task + cmd 是定时炸弹"
+    ],
+    "hidden": [
+      "Scheduled Task + cmd 是定时炸弹"
+    ],
+    "select": [
+      "mock 数据形状决定测试质量"
+    ],
+    "insert": [
+      "mock 数据形状决定测试质量"
+    ],
+    "update": [
+      "mock 数据形状决定测试质量"
+    ],
+    "count": [
+      "mock 数据形状决定测试质量"
+    ],
+    "cron": [
+      "不用 cron 驱动进化"
+    ],
+    "ai": [
+      "不用 cron 驱动进化",
+      "OWASP 2026 新增两项"
+    ],
+    "memory": [
+      "不用 cron 驱动进化"
+    ],
+    "db": [
+      "DB 连接池 queueLimit 不能是 0",
+      "DB 连接池不能无限排队"
+    ],
+    "queuelimit": [
+      "DB 连接池 queueLimit 不能是 0"
+    ],
+    "owasp": [
+      "OWASP 2026 新增两项"
+    ],
+    "agentic": [
+      "OWASP 2026 新增两项"
+    ],
+    "bola": [
+      "OWASP 2026 新增两项",
+      "BOLA 是逻辑漏洞，扫描器检测不到",
+      "BOLA 防护靠数据层",
+      "BOLA 防护靠数据层过滤"
+    ],
+    "id": [
+      "OWASP 2026 新增两项",
+      "AppError 类体系让错误处理变简单"
+    ],
+    "prompt": [
+      "行业已从 Prompt Engineering → Context Engineering → Harness Engineering"
+    ],
+    "engineering": [
+      "行业已从 Prompt Engineering → Context Engineering → Harness Engineering"
+    ],
+    "context": [
+      "行业已从 Prompt Engineering → Context Engineering → Harness Engineering"
+    ],
+    "harness": [
+      "行业已从 Prompt Engineering → Context Engineering → Harness Engineering"
+    ],
+    "pool": [
+      "pool.execute() 比 pool.query() 更安全"
+    ],
+    "execute": [
+      "pool.execute() 比 pool.query() 更安全"
+    ],
+    "query": [
+      "pool.execute() 比 pool.query() 更安全",
+      "z.coerce 是 query 参数的标准做法"
+    ],
+    "prepared": [
+      "pool.execute() 比 pool.query() 更安全"
+    ],
+    "statement": [
+      "pool.execute() 比 pool.query() 更安全"
+    ],
+    "mysql": [
+      "pool.execute() 比 pool.query() 更安全"
+    ],
+    "and": [
+      "BOLA 是逻辑漏洞，扫描器检测不到",
+      "BOLA 防护靠数据层"
+    ],
+    "skill": [
+      "技能文件是持久化知识"
+    ],
+    "md": [
+      "技能文件是持久化知识"
+    ],
+    "bash": [
+      "权限问题别等老板说"
+    ],
+    "parseint": [
+      "Zod 替代手动校验"
+    ],
+    "if": [
+      "Zod 替代手动校验"
+    ],
+    "field": [
+      "Zod 替代手动校验"
+    ],
+    "coerce": [
+      "Zod 替代手动校验",
+      "z.coerce 是 query 参数的标准做法"
+    ],
+    "number": [
+      "Zod 替代手动校验",
+      "z.coerce 是 query 参数的标准做法"
+    ],
+    "int": [
+      "Zod 替代手动校验"
+    ],
+    "positive": [
+      "Zod 替代手动校验"
+    ],
+    "string": [
+      "z.coerce 是 query 参数的标准做法",
+      "Zod v4 新增 `z.email()` / `z.uuid()` / `z.url()` 等 primitive 校验器"
+    ],
+    "parse": [
+      "z.coerce 是 query 参数的标准做法"
+    ],
+    "validate": [
+      "z.coerce 是 query 参数的标准做法",
+      "validate 中间件改为 next(err) 模式"
+    ],
+    "jwt": [
+      "JWT 30 天过期是安全隐患"
+    ],
+    "access": [
+      "JWT 30 天过期是安全隐患"
+    ],
+    "token": [
+      "JWT 30 天过期是安全隐患",
+      "Refresh token rotation with reuse detection 是 2026 金标准"
+    ],
+    "refresh": [
+      "JWT 30 天过期是安全隐患",
+      "Refresh token rotation with reuse detection 是 2026 金标准"
+    ],
+    "rotation": [
+      "JWT 30 天过期是安全隐患",
+      "Refresh token rotation with reuse detection 是 2026 金标准"
+    ],
+    "schema": [
+      "18 个路由文件中 11 个没有输入校验"
+    ],
+    "mass": [
+      "18 个路由文件中 11 个没有输入校验"
+    ],
+    "assignment": [
+      "18 个路由文件中 11 个没有输入校验"
+    ],
+    "email": [
+      "Zod v4 新增 `z.email()` / `z.uuid()` / `z.url()` 等 primitive 校验器"
+    ],
+    "uuid": [
+      "Zod v4 新增 `z.email()` / `z.uuid()` / `z.url()` 等 primitive 校验器"
+    ],
+    "url": [
+      "Zod v4 新增 `z.email()` / `z.uuid()` / `z.url()` 等 primitive 校验器"
+    ],
+    "primitive": [
+      "Zod v4 新增 `z.email()` / `z.uuid()` / `z.url()` 等 primitive 校验器"
+    ],
+    "with": [
+      "Refresh token rotation with reuse detection 是 2026 金标准"
+    ],
+    "reuse": [
+      "Refresh token rotation with reuse detection 是 2026 金标准"
+    ],
+    "detection": [
+      "Refresh token rotation with reuse detection 是 2026 金标准"
+    ],
+    "obsidian": [
+      "Obsidian 对接零成本"
+    ],
+    "wiki": [
+      "Obsidian 对接零成本"
+    ],
+    "link": [
+      "Obsidian 对接零成本"
+    ],
+    "frontmatter": [
+      "Obsidian 对接零成本"
+    ],
+    "uncaughtexception": [
+      "B6: 选 `uncaughtException` + `unhandledRejection` 全局处理器 而非 在每个路由里单独处理"
+    ],
+    "unhandledrejection": [
+      "B6: 选 `uncaughtException` + `unhandledRejection` 全局处理器 而非 在每个路由里单独处理"
+    ],
+    "handler": [
+      "B6: 选 `uncaughtException` + `unhandledRejection` 全局处理器 而非 在每个路由里单独处理"
+    ],
+    "try": [
+      "B6: 选 `uncaughtException` + `unhandledRejection` 全局处理器 而非 在每个路由里单独处理"
+    ],
+    "catch": [
+      "B6: 选 `uncaughtException` + `unhandledRejection` 全局处理器 而非 在每个路由里单独处理"
+    ],
+    "constitutional": [
+      "思维宪法是能力的放大器"
+    ],
+    "prompting": [
+      "思维宪法是能力的放大器"
+    ],
+    "rfc": [
+      "RFC 9457 错误格式是 2026 行业标准",
+      "新建 `utils/errors.js`"
+    ],
+    "stripe": [
+      "RFC 9457 错误格式是 2026 行业标准"
+    ],
+    "github": [
+      "RFC 9457 错误格式是 2026 行业标准"
+    ],
+    "cloudflare": [
+      "RFC 9457 错误格式是 2026 行业标准"
+    ],
+    "type": [
+      "RFC 9457 错误格式是 2026 行业标准"
+    ],
+    "title": [
+      "RFC 9457 错误格式是 2026 行业标准"
+    ],
+    "status": [
+      "RFC 9457 错误格式是 2026 行业标准",
+      "AppError 类体系让错误处理变简单"
+    ],
+    "detail": [
+      "RFC 9457 错误格式是 2026 行业标准"
+    ],
+    "instance": [
+      "RFC 9457 错误格式是 2026 行业标准"
+    ],
+    "apperror": [
+      "AppError 类体系让错误处理变简单",
+      "全局错误处理器升级"
+    ],
+    "validationerror": [
+      "AppError 类体系让错误处理变简单"
+    ],
+    "notfounderror": [
+      "AppError 类体系让错误处理变简单"
+    ],
+    "autherror": [
+      "AppError 类体系让错误处理变简单"
+    ],
+    "throw": [
+      "AppError 类体系让错误处理变简单"
+    ],
+    "new": [
+      "AppError 类体系让错误处理变简单"
+    ],
+    "res": [
+      "AppError 类体系让错误处理变简单",
+      "validate 中间件改为 next(err) 模式"
+    ],
+    "json": [
+      "AppError 类体系让错误处理变简单",
+      "validate 中间件改为 next(err) 模式",
+      "依赖升级后的 API 审计"
+    ],
+    "next": [
+      "validate 中间件改为 next(err) 模式"
+    ],
+    "err": [
+      "validate 中间件改为 next(err) 模式"
+    ],
+    "servererror": [
+      "向后兼容很重要",
+      "新建 `utils/errors.js`"
+    ],
+    "js": [
+      "向后兼容很重要",
+      "新建 `utils/errors.js`"
+    ],
+    "utils": [
+      "新建 `utils/errors.js`"
+    ],
+    "npm": [
+      "依赖升级后的 API 审计"
+    ],
+    "install": [
+      "依赖升级后的 API 审计"
+    ],
+    "package": [
+      "依赖升级后的 API 审计"
+    ],
+    "node": [
+      "Windows 后台进程的正确姿势"
+    ],
+    "pg": [
+      "DB 连接池不能无限排队"
+    ],
+    "crud": [
+      "BOLA 防护靠数据层过滤"
+    ]
+  }
+}

@@ -4,13 +4,9 @@ const { adminRequired } = require('../../middleware/auth')
 const { z } = require('zod')
 const validate = require('../../middleware/validate')
 const opLog = require('../../middleware/opLog')
+const { serverError } = require('../../utils/response')
 
 router.use(adminRequired)
-
-function serverError(res, logMsg) {
-  if (logMsg) console.error('[admin-orders]', logMsg)
-  return res.status(500).json({ code: 500, message: '服务器内部错误，请稍后重试' })
-}
 
 // 订单列表
 router.get('/', async (req, res) => {
