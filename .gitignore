@@ -4,3 +4,16 @@ node_modules/
 .DS_Store
 dist/
 .cache/
+__pycache__/
+*.pyc
+# 包含真实 API 密钥, 禁止提交
+providers.json
+*.bat
+# Ed25519 审计签名私钥, 禁止提交
+.claude/tracking/audit-key.secret
+.claude/tracking/.audit-chain.lock
+.claude/tracking/watchdog.pid
+# 看门狗运行日志 (操作数据, 不提交)
+.claude/tracking/watchdog-log.jsonl
+.claude/tracking/watchdog-alerts.jsonl
+server/.env
