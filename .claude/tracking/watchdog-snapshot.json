@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-28T13:07:01Z",
+  "timestamp": "2026-05-28T13:43:02Z",
   "files": [
     {
       "file": ".claude/framework-v2-minimal.md",
@@ -19,19 +19,19 @@
     },
     {
       "file": "cross_verify.py",
-      "sha256": "6fcf01daf89d8645"
+      "sha256": "d0e48ee6f8c1303f"
     },
     {
       "file": "audit_chain.py",
-      "sha256": "d646112d6e401998"
+      "sha256": "28a7d928189bd9fa"
     },
     {
       "file": "front_router.py",
-      "sha256": "b0c16cda58c6ed63"
+      "sha256": "6dd0c31781bdda58"
     },
     {
       "file": "mingjian_watchdog.py",
-      "sha256": "9768b6c44852e5b6"
+      "sha256": "e084f0a72ced6301"
     },
     {
       "file": "watchdog_external.py",
@@ -39,7 +39,7 @@
     },
     {
       "file": ".github/workflows/external-watchdog.yml",
-      "sha256": "da29f56b6c3bb7e0"
+      "sha256": "0c92d65874782d95"
     }
   ]
 }
