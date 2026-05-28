@@ -206,11 +206,13 @@ ALLOWED_UPSTREAM_DOMAINS = {
     "api.groq.com",
 }
 
-# 速率限制: 简单的基于IP的令牌桶 (内存)
-_rate_limit_buckets: dict = {}  # ip -> {"tokens": float, "last_refill": float}
-RATE_LIMIT_RPS = 10.0          # 每秒允许请求数
-RATE_LIMIT_BURST = 30          # 突发容量
-_rate_limit_cleanup = 0.0       # 上次清理时间戳
+# 速率限制: 基于IP的令牌桶 (内存) — 2026 最佳实践: asyncio.Lock + setdefault 防竞态
+_rate_limit_buckets: dict = {}  # ip → {"tokens": float, "last_refill": float}
+_rate_limit_lock = None          # 延迟初始化 asyncio.Lock (需在 event loop 内创建)
+RATE_LIMIT_RPS = 10.0           # 每秒允许请求数
+RATE_LIMIT_BURST = 30           # 突发容量
+RATE_LIMIT_MAX_BUCKETS = 10000  # 最大 IP 数, 防止内存耗尽 DOS
+_rate_limit_cleanup = 0.0        # 上次清理时间戳
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -715,31 +717,43 @@ def _validate_upstream_url(url: str) -> bool:
         return False
 
 
-def _check_rate_limit(ip: str) -> bool:
-    """令牌桶速率限制, 返回 True=放行, False=限流"""
-    global _rate_limit_cleanup
+async def _check_rate_limit(ip: str) -> bool:
+    """令牌桶速率限制 (async 安全版本)
+
+    2026 最佳实践修复:
+      - asyncio.Lock 防竞态: token refill/deduct 原子操作
+      - dict.setdefault 原子插入: 消除 check-then-set TOCTOU
+      - 桶数上限: 防止 IP 伪造导致内存耗尽 DOS
+    """
+    global _rate_limit_lock, _rate_limit_cleanup
     now = time.time()
 
-    # 每60秒清理一次过期条目
-    if now - _rate_limit_cleanup > 60:
-        stale = [k for k, v in _rate_limit_buckets.items() if now - v["last_refill"] > 120]
-        for k in stale:
-            del _rate_limit_buckets[k]
-        _rate_limit_cleanup = now
+    # 延迟初始化 lock (确保在 event loop 内创建)
+    if _rate_limit_lock is None:
+        _rate_limit_lock = asyncio.Lock()
 
-    bucket = _rate_limit_buckets.get(ip)
-    if bucket is None:
-        bucket = {"tokens": RATE_LIMIT_BURST, "last_refill": now}
-        _rate_limit_buckets[ip] = bucket
+    async with _rate_limit_lock:
+        # 每60秒清理一次过期条目
+        if now - _rate_limit_cleanup > 60:
+            stale = [k for k, v in _rate_limit_buckets.items() if now - v["last_refill"] > 120]
+            for k in stale:
+                del _rate_limit_buckets[k]
+            _rate_limit_cleanup = now
 
-    elapsed = now - bucket["last_refill"]
-    bucket["tokens"] = min(RATE_LIMIT_BURST, bucket["tokens"] + elapsed * RATE_LIMIT_RPS)
-    bucket["last_refill"] = now
+        # 原子插入 (消除 TOCTOU 竞态)
+        if len(_rate_limit_buckets) >= RATE_LIMIT_MAX_BUCKETS and ip not in _rate_limit_buckets:
+            return False  # 桶已满→拒绝新IP (内存保护)
 
-    if bucket["tokens"] >= 1.0:
-        bucket["tokens"] -= 1.0
-        return True
-    return False
+        bucket = _rate_limit_buckets.setdefault(ip, {"tokens": float(RATE_LIMIT_BURST), "last_refill": now})
+
+        elapsed = now - bucket["last_refill"]
+        bucket["tokens"] = min(float(RATE_LIMIT_BURST), bucket["tokens"] + elapsed * RATE_LIMIT_RPS)
+        bucket["last_refill"] = now
+
+        if bucket["tokens"] >= 1.0:
+            bucket["tokens"] -= 1.0
+            return True
+        return False
 
 
 async def proxy(request: Request):
@@ -756,7 +770,7 @@ async def proxy(request: Request):
 
     # === 安全门2: 速率限制 ===
     client_ip = request.client.host if request.client else "127.0.0.1"
-    if not _check_rate_limit(client_ip):
+    if not await _check_rate_limit(client_ip):
         return JSONResponse(
             {"error": {"type": "rate_limit_error", "message": "too many requests"}},
             status_code=429,
