@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-05-28T13:07:01Z",
+  "health": "HEALTHY",
+  "checks_summary": {
+    "bootstrap_integrity": {
+      "ok": true,
+      "message": "自完整性: 5 模块通过"
+    },
+    "port": {
+      "ok": true,
+      "message": "端口 8765 正常监听"
+    },
+    "audit_chain": {
+      "ok": true,
+      "message": "审计链有效: 4 事件"
+    },
+    "framework_integrity": {
+      "ok": true,
+      "message": "10/10 文件完整"
+    },
+    "cross_verify": {
+      "ok": true,
+      "message": "cross_verify.py: 七牛云 Claude 可用"
+    },
+    "root_risks": {
+      "ok": true,
+      "message": "根风险: 4 OPEN / 6 CLOSED (60%)"
+    },
+    "meta_watchdog": {
+      "ok": true,
+      "message": "基础设施就绪; git remote 已配置; 完整性清单已初始化"
+    }
+  },
+  "pid": 31284,
+  "hostname": "薛立堃"
+}
