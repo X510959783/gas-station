@@ -274,6 +274,229 @@ def verify_chain(strict: bool = True) -> dict:
 
 
 # ═══════════════════════════════════════════════════════════════
+# Merkle 树审计 (RFC 6962) — O(log n) 验证 + 包含证明
+# 参考: VCP v1.1 + Certificate Transparency + findata-guard (2026)
+# ═══════════════════════════════════════════════════════════════
+
+# 每 N 个事件构建一棵 Merkle 树 (2 的幂)
+MERKLE_BATCH_SIZE = 64
+
+# RFC 6962 域分隔前缀 — 防第二原像攻击 (CVE-2012-2459)
+_LEAF_PREFIX = b"\x00"
+_NODE_PREFIX = b"\x01"
+_HEAD_PREFIX = b"\x02"
+
+
+def _merkle_hash(data: bytes, prefix: bytes = _NODE_PREFIX) -> str:
+    """域分隔哈希 — 防第二原像攻击"""
+    return hashlib.sha256(prefix + data).hexdigest()
+
+
+class MerkleTree:
+    """RFC 6962 兼容 Merkle 树 — O(log n) 包含证明
+
+    特性:
+      - 域分隔哈希: leaf=\x00, node=\x01 (防第二原像)
+      - 奇数叶提升 (非复制): 防 CVE-2012-2459
+      - 完美平衡: 仅 2^k 叶时构建完整树
+    """
+
+    def __init__(self, leaves: list):
+        if not leaves:
+            raise ValueError("Merkle 树至少需要一个叶节点")
+        # 填充到 2 的幂 (RFC 6962: 完美平衡树)
+        n = 1
+        while n < len(leaves):
+            n <<= 1
+        self._padded = leaves + [None] * (n - len(leaves))
+        self._size = len(leaves)
+        self._levels = self._build()
+
+    def _build(self) -> list:
+        """构建 Merkle 树各层"""
+        # 第0层: 叶节点哈希
+        level = []
+        for leaf in self._padded:
+            if leaf is not None:
+                leaf_bytes = canonicalize(leaf)
+                level.append(_merkle_hash(leaf_bytes, _LEAF_PREFIX))
+            else:
+                level.append("")  # 填充节点为空串
+        levels = [level]
+
+        # 逐层构建内部节点
+        while len(level) > 1:
+            next_level = []
+            for i in range(0, len(level), 2):
+                left = level[i]
+                right = level[i + 1] if i + 1 < len(level) else left  # 提升奇数叶
+                combined = (left + right).encode()
+                next_level.append(_merkle_hash(combined, _NODE_PREFIX))
+            level = next_level
+            levels.append(level)
+        return levels
+
+    @property
+    def root(self) -> str:
+        return self._levels[-1][0]
+
+    @property
+    def size(self) -> int:
+        return self._size
+
+    def inclusion_proof(self, index: int) -> dict:
+        """为第 index 个叶生成 O(log n) 包含证明
+
+        Returns:
+            {"leaf_index": int, "leaf_hash": str, "proof": [str], "root": str}
+            其中 proof 是兄弟哈希列表 (从叶到根)
+        """
+        if index < 0 or index >= self._size:
+            raise IndexError(f"叶索引 {index} 超出范围 [0, {self._size})")
+
+        proof = []
+        current_idx = index
+        for level_idx in range(len(self._levels) - 1):
+            level = self._levels[level_idx]
+            # 确定兄弟索引
+            if current_idx % 2 == 0:
+                sibling_idx = current_idx + 1
+            else:
+                sibling_idx = current_idx - 1
+            # 兄弟存在则添加到证明, 否则使用自身 (奇数叶提升)
+            if sibling_idx < len(level) and level[sibling_idx]:
+                proof.append(level[sibling_idx])
+            else:
+                proof.append(level[current_idx])  # 填充节点→使用自身
+            current_idx //= 2
+
+        return {
+            "leaf_index": index,
+            "leaf_hash": self._levels[0][index],
+            "proof": proof,
+            "root": self.root,
+            "tree_size": self._size,
+        }
+
+    def to_dict(self) -> dict:
+        """序列化为可存储的字典"""
+        return {
+            "algorithm": "RFC6962-SHA256",
+            "size": self._size,
+            "root": self.root,
+            "leaf_hashes": self._levels[0][:self._size],
+        }
+
+
+def verify_inclusion_proof(proof: dict) -> bool:
+    """验证包含证明 — O(log n), 无需访问完整树
+
+    任何拥有树根哈希的人都可以独立验证一个事件是否在树中。
+    """
+    leaf_hash = proof["leaf_hash"]
+    root = proof["root"]
+    siblings = proof["proof"]
+    idx = proof["leaf_index"]
+
+    current = leaf_hash
+    for sibling in siblings:
+        if idx % 2 == 0:
+            combined = (current + sibling).encode()
+        else:
+            combined = (sibling + current).encode()
+        current = _merkle_hash(combined, _NODE_PREFIX)
+        idx //= 2
+
+    return current == root
+
+
+def build_merkle_head(from_seq: int = 0, to_seq: int | None = None) -> dict | None:
+    """对审计链中 [from_seq, to_seq] 范围的事件构建 Merkle 树头
+
+    树头用 Ed25519 签名, 作为该批次事件的密码学承诺。
+    签名后的树头追加到审计链 (type=merkle_head)。
+    """
+    chain = read_chain()
+    if not chain:
+        return None
+
+    if to_seq is None:
+        to_seq = len(chain) - 1
+
+    # 筛选范围内的事件 (排除已有的 merkle_head 事件)
+    batch = [e for e in chain if from_seq <= e.get("seq", 0) <= to_seq
+             and e.get("type") != "merkle_head"]
+
+    if len(batch) < 2:
+        return None
+
+    tree = MerkleTree(batch)
+    seed, pubkey = load_keys()
+    private_key = ed25519.Ed25519PrivateKey.from_private_bytes(seed)
+
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    head = {
+        "merkle_root": tree.root,
+        "batch_size": tree.size,
+        "from_seq": batch[0].get("seq", 0),
+        "to_seq": batch[-1].get("seq", 0),
+        "timestamp": ts,
+        "algorithm": "RFC6962-SHA256",
+    }
+
+    # 签名树头
+    head_bytes = _merkle_hash(json.dumps(head, sort_keys=True, ensure_ascii=False).encode(), _HEAD_PREFIX)
+    signature = private_key.sign(head_bytes.encode())
+
+    # 写入带签名的树头事件
+    event = sign_event("merkle_head", {
+        **head,
+        "head_hash": head_bytes,
+        "sig_hex": signature.hex(),
+        "pubkey_hex": pubkey.hex(),
+    })
+    return event
+
+
+def get_inclusion_proof(seq: int) -> dict | None:
+    """为审计链中第 seq 号事件生成包含证明
+
+    自动找到包含该 seq 的最近 Merkle 树头。
+    """
+    chain = read_chain()
+    # 找到目标事件
+    target = None
+    for e in chain:
+        if e.get("seq") == seq and e.get("type") != "merkle_head":
+            target = e
+            break
+    if target is None:
+        return None
+
+    # 找到最近的后续 merkle_head (包含此事件)
+    for e in chain:
+        if e.get("type") == "merkle_head":
+            data = e.get("data", {})
+            if data.get("from_seq", 0) <= seq <= data.get("to_seq", float("inf")):
+                # 提取批次内所有非merkle_head事件
+                batch = [ev for ev in chain
+                         if data["from_seq"] <= ev.get("seq", 0) <= data["to_seq"]
+                         and ev.get("type") != "merkle_head"]
+                # 找到目标在批次内的索引
+                try:
+                    leaf_idx = next(i for i, ev in enumerate(batch) if ev.get("seq") == seq)
+                except StopIteration:
+                    return None
+                tree = MerkleTree(batch)
+                proof = tree.inclusion_proof(leaf_idx)
+                proof["head_hash"] = data.get("head_hash", "")
+                proof["head_signed"] = e.get("sig", "")
+                return proof
+
+    return None  # 无 Merkle 树头覆盖此事件
+
+
+# ═══════════════════════════════════════════════════════════════
 # CLI
 # ═══════════════════════════════════════════════════════════════
 
@@ -354,11 +577,13 @@ def cmd_stats():
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("用法: python audit_chain.py [init|sign|verify|stats]")
+        print("用法: python audit_chain.py [init|sign|verify|stats|merkle|proof]")
         print("  init   - 生成密钥对+创世事件")
-        print("  sign   - 从stdin读取JSON签名追加 (echo '{\"_type\":\"test\"}' | python audit_chain.py sign)")
-        print("  verify - 验证完整审计链")
+        print("  sign   - 从stdin读取JSON签名追加")
+        print("  verify - 验证完整审计链 (哈希链+签名)")
         print("  stats  - 审计链统计")
+        print("  merkle - 构建 Merkle 树头 (O(log n) 验证)")
+        print("  proof <seq> - 生成第 seq 号事件的包含证明")
         sys.exit(1)
 
     cmd = sys.argv[1]
@@ -370,6 +595,25 @@ if __name__ == "__main__":
         cmd_verify()
     elif cmd == "stats":
         cmd_stats()
+    elif cmd == "merkle":
+        head = build_merkle_head()
+        if head:
+            print(json.dumps(head, ensure_ascii=False, indent=2))
+            print(f"Merkle 树头已追加到审计链: {head['data']['batch_size']} 事件, "
+                  f"根={head['data']['merkle_root'][:16]}...")
+        else:
+            print("事件不足, 无法构建 Merkle 树 (需 >=2 个事件)")
+    elif cmd == "proof":
+        seq = int(sys.argv[2]) if len(sys.argv) > 2 else 0
+        proof = get_inclusion_proof(seq)
+        if proof:
+            print(json.dumps(proof, ensure_ascii=False, indent=2))
+            valid = verify_inclusion_proof(proof)
+            print(f"包含证明验证: {'有效' if valid else '无效'}")
+            sys.exit(0 if valid else 1)
+        else:
+            print(f"事件 seq={seq} 无包含证明 (可能未被 Merkle 树头覆盖)")
+            sys.exit(1)
     else:
         print(f"未知命令: {cmd}")
         sys.exit(1)
