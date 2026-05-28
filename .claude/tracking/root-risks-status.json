@@ -1,26 +1,66 @@
 {
-  "tracking_system": "深挖v3.0闭环追踪",
+  "tracking_system": "深挖v3.2闭环追踪",
   "methodology": "Reasoning Loop + ESAA-Security + Dawgen",
-  "updated": "2026-05-28",
+  "updated": "2026-05-28T14:00:00Z",
+  "recent_changes": [
+    {
+      "date": "2026-05-28",
+      "change": "三级智能路由部署: L1 DeepSeek Flash(40%) + L2 DeepSeek V4-Pro(50%) + L3 七牛云 Claude Sonnet 4.6(10%)。缓解root-2(单供应商锁定)。front_router.py实现复杂度检测+智能路由+回退链。",
+      "affected_roots": ["root-2", "root-10"],
+      "files": ["front_router.py"]
+    },
+    {
+      "date": "2026-05-28",
+      "change": "交叉模型对抗验证部署: cross_verify.py —— DeepSeek生成 → Claude Sonnet独立审计。缓解root-1(无外部验证)。Ed25519签名+audit_chain.py哈希链。",
+      "affected_roots": ["root-1", "root-4"],
+      "files": ["cross_verify.py", "audit_chain.py"]
+    },
+    {
+      "date": "2026-05-28",
+      "change": "密钥安全加固: 环境变量优先(安全最佳实践) + providers.json加入.gitignore。frront_router.py新增ENV_KEY_MAP。",
+      "affected_roots": ["root-4"],
+      "files": ["front_router.py", ".gitignore", "providers.example.json"]
+    },
+    {
+      "date": "2026-05-28",
+      "change": "明鉴v1.1进化: (1)双机看门狗——Windows本地+GitHub Actions外部独立验证。(2)Merkle树审计链——RFC 6962 O(log n)验证+包含证明。(3)ProofGuard预执行验证门——No Proof No Execution, FAIL_CLOSED。(4)静默失败检测——3信号(Z-score/空输出/过期)。(5)速率限制竞态修复——asyncio.Lock+setdefault原子化。root-1大幅缓解(真正独立第二台机器)。root-4增强(密码学包含证明+预执行门控)。",
+      "affected_roots": ["root-1", "root-4", "root-10"],
+      "files": ["mingjian_watchdog.py", "watchdog_external.py", "audit_chain.py", "cross_verify.py", "front_router.py", "heartbeat_push.py"]
+    }
+  ],
   "root_risks": [
     {
       "id": "root-1",
       "name": "框架建立时无外部验证",
       "status": "OPEN",
-      "action": "需老板外部裁决",
+      "severity": "CRITICAL",
+      "category": "structural",
+      "opened": "2026-05-27",
+      "last_updated": "2026-05-28",
+      "action": "需老板外部裁决。缓解: cross_verify.py —— 七牛云 Claude Sonnet 4.6 作为对抗性审计师(不同厂商/不同架构/不同训练数据)。仅HIGH/CRITICAL严重性触发, ~¥0.07/次。",
+      "mitigation": "【v1.0】cross_verify.py: DeepSeek生成→Claude Sonnet独立审计(Tri-Agent Audit Framework + CourtGuard)。Claude角色=对抗性审计师(非'第二意见')。【v1.1】双机看门狗: Windows本地(mingjian_watchdog,30min)+GitHub Actions外部独立(watchdog_external,30min) —— 真正独立第二台机器,不同物理位置/OS/网络,不受本地executor控制。外部看门狗通过Ed25519公钥验证审计链完整性,公钥可分发无需信任。【限制】executor理论上可篡改本地看门狗→外部看门狗检测到并告警(去重Issue)。",
       "derivatives": ["#47","#48","#54","#80","#83","#91","#92","#69"]
     },
     {
       "id": "root-2",
-      "name": "所有体系同一模型",
+      "name": "所有体系同一模型(单供应商锁定)",
       "status": "OPEN",
-      "action": "结构性不可逆（需换模型/外部镜像）",
+      "severity": "CRITICAL",
+      "category": "infrastructure",
+      "opened": "2026-05-27",
+      "last_updated": "2026-05-28",
+      "action": "大幅缓解: 三级路由——DeepSeek Flash + DeepSeek V4-Pro + 七牛云 Claude Sonnet 4.6(不同厂商/不同架构)。SkyClaw/Cerebras/Groq为附加回退。",
+      "mitigation": "2026-05-28部署三级智能路由: L1 DeepSeek Flash(40%)+L2 DeepSeek V4-Pro(50%)+L3 七牛云 Claude(10%)。两个独立供应商(DeepSeek+Anthropic),不同模型架构,不同训练数据。月预算¥1,450。限制: 两个模型共享相似训练数据盲区——非真正多供应商。",
       "derivatives": ["#58","#59","#60","#66","#67"]
     },
     {
       "id": "root-3",
       "name": "框架文件零版本控制",
       "status": "CLOSED",
+      "severity": "HIGH",
+      "category": "process",
+      "opened": "2026-05-27",
+      "closed": "2026-05-28",
       "fixed_at": "2026-05-28",
       "evidence": "git commit 634f764d + 9e1b11c8",
       "derivatives": ["#84","#49","#85","#41","#65"]
@@ -29,13 +69,22 @@
       "id": "root-4",
       "name": "核心执行机制不可审计",
       "status": "OPEN",
-      "action": "结构性不可逆（内部认知行为无法外部验证）",
+      "severity": "CRITICAL",
+      "category": "structural",
+      "opened": "2026-05-27",
+      "last_updated": "2026-05-28",
+      "action": "结构性不可逆(内部认知行为无法外部验证)。缓解: audit_chain.py(Ed25519签名+SHA-256哈希链+IETF SPICE draft)+cross_verify.py(Claude对抗性审计)+self_check.py(自动化健康检查)。",
+      "mitigation": "【v1.0】audit_chain.py提供密码学不可否认性(Ed25519签名+SHA-256哈希链+IETF SPICE draft)。cross_verify.py提供独立模型审计。【v1.1】Merkle树审计链:RFC 6962标准,O(log n)包含证明,防第二原像攻击(CVE-2012-2459 domain-separated hashing)。ProofGuard预执行门:决策记录必须在操作之前存在,FAIL_CLOSED,拒绝=有效系统结果非错误(OAP arXiv:2603.20953)。自完整性验证(微软AgentGov v1.1.0)。静默失败检测(3信号Z-score)。【限制】所有审计工具由同一executor运行——结构性限制。外部看门狗(GitHub Actions)独立验证缓解此限制。",
       "derivatives": ["#39","#73","#55","#82","#53"]
     },
     {
       "id": "root-5",
       "name": "框架设计无退出/终局",
       "status": "CLOSED",
+      "severity": "HIGH",
+      "category": "design",
+      "opened": "2026-05-27",
+      "closed": "2026-05-28",
       "fixed_at": "2026-05-28",
       "evidence": "framework-v2-minimal.md L17-18: COMPLETION_CONDITION + EXIT_PROCEDURE",
       "derivatives": ["#96","#97","#107","#108","#98"]
@@ -44,39 +93,60 @@
       "id": "root-6",
       "name": "规则只增不减",
       "status": "CLOSED",
+      "severity": "HIGH",
+      "category": "design",
+      "opened": "2026-05-27",
+      "closed": "2026-05-28",
       "fixed_at": "2026-05-28",
-      "evidence": "framework-v2-minimal.md: 7条规则替代3035行",
+      "evidence": "framework-v2-minimal.md: 7条规则替代3035行旧框架",
       "derivatives": ["#75","#76","#45","#102","#27"]
     },
     {
       "id": "root-7",
-      "name": "接口单向声明",
+      "name": "接口单向声明(无实际调用)",
       "status": "CLOSED",
+      "severity": "MEDIUM",
+      "category": "design",
+      "opened": "2026-05-27",
+      "closed": "2026-05-28",
       "fixed_at": "2026-05-28",
-      "evidence": "framework-v2-minimal.md删除了所有跨系统接口声明",
+      "evidence": "framework-v2-minimal.md删除了所有跨系统接口声明。模块A/B/C各自独立。",
       "derivatives": ["#51","#52"]
     },
     {
       "id": "root-8",
-      "name": "遗漏不对称",
+      "name": "遗漏不对称(发现但不修复)",
       "status": "CLOSED",
+      "severity": "MEDIUM",
+      "category": "behavioral",
+      "opened": "2026-05-27",
+      "closed": "2026-05-28",
       "fixed_at": "2026-05-28",
-      "evidence": "framework-v2-minimal.md规则5: 遗漏自查",
+      "evidence": "framework-v2-minimal.md规则5(遗漏自查)+deepdig规则3(发现/修复比≤3:1)",
       "derivatives": ["#86","#87","#101","#78"]
     },
     {
       "id": "root-9",
-      "name": "自审计无结构性边界",
+      "name": "自审计无结构性边界(无限递归)",
       "status": "CLOSED",
+      "severity": "MEDIUM",
+      "category": "design",
+      "opened": "2026-05-27",
+      "closed": "2026-05-28",
       "fixed_at": "2026-05-28",
-      "evidence": "framework-v2-minimal.md L16: MAX_RECURSION_DEPTH=5",
+      "evidence": "framework-v2-minimal.md: MAX_RECURSION_DEPTH=5",
       "derivatives": ["#44","#105","#46","#106"]
     },
     {
       "id": "root-10",
-      "name": "感知过滤器",
+      "name": "感知过滤器(单一模型视角盲区)",
       "status": "OPEN",
-      "action": "需老板外部裁决 + 外部镜像验证",
+      "severity": "HIGH",
+      "category": "cognitive",
+      "opened": "2026-05-27",
+      "last_updated": "2026-05-28",
+      "action": "大幅缓解: 三级路由+L3 Claude Sonnet(不同厂商/架构)+cross_verify.py对抗性审计。Claude的盲区不完全重叠于DeepSeek——行为纠缠度低(collision_delta≈0.88, arXiv:2604.07650)。",
+      "mitigation": "2026-05-28部署三级路由(含七牛云Claude)和cross_verify.py对抗审计。不同厂商的盲区不完全重叠。限制: 两个模型共享相似互联网训练数据——完全解决需人类外部镜像。",
       "derivatives": ["#99","#100","#88","#89"]
     }
   ],
@@ -85,6 +155,7 @@
     "closed": 6,
     "open": 4,
     "structural_irreversible": 2,
-    "needs_boss": 2
+    "needs_boss": 2,
+    "closure_rate": 0.60
   }
 }
