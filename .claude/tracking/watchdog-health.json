@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-28T13:07:01Z",
+  "timestamp": "2026-05-28T18:37:01Z",
   "health": "HEALTHY",
   "checks_summary": {
     "bootstrap_integrity": {
@@ -12,7 +12,7 @@
     },
     "audit_chain": {
       "ok": true,
-      "message": "审计链有效: 4 事件"
+      "message": "审计链有效: 97 事件"
     },
     "framework_integrity": {
       "ok": true,
@@ -29,9 +29,17 @@
     "meta_watchdog": {
       "ok": true,
       "message": "基础设施就绪; git remote 已配置; 完整性清单已初始化"
+    },
+    "silent_failure": {
+      "ok": true,
+      "message": "静默失败检测通过"
+    },
+    "knowledge_freshness": {
+      "ok": true,
+      "message": "知识新鲜 (4h前刷新, 9条发现)"
     }
   },
-  "pid": 31284,
+  "pid": 30284,
   "hostname": "薛立堃",
-  "_heartbeat": "2026-05-28T13:29:12Z"
+  "_heartbeat": "2026-05-28T19:07:00Z"
 }
