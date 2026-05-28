@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-28T13:43:02Z",
+  "timestamp": "2026-05-28T13:55:21Z",
   "files": [
     {
       "file": ".claude/framework-v2-minimal.md",
@@ -31,7 +31,7 @@
     },
     {
       "file": "mingjian_watchdog.py",
-      "sha256": "e084f0a72ced6301"
+      "sha256": "9cf24cd177c0c001"
     },
     {
       "file": "watchdog_external.py",
