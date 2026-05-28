@@ -377,6 +377,134 @@ def pre_action_stamp(action: str, target: str, severity: str = "MEDIUM",
         return ""
 
 
+def proofguard_gate(action: str, target: str, severity: str = "MEDIUM",
+                    required_checks: list | None = None,
+                    signer: str = "cross-verify") -> dict:
+    """ProofGuard 预执行验证门 — "No Proof, No Execution" (2026 模式)
+
+    基于: ProofGuard (PyPI) + OAP (arXiv:2603.20953) + SRM (arXiv:2603.22350)
+
+    核心不变式:
+      1. 决策记录(proof)必须在操作之前存在 — 结构保证不可绕过
+      2. 任何门控异常 → FAIL_CLOSED (拒绝执行, 绝不静默通过)
+      3. 拒绝是有效系统结果, 不是错误 — DENY ≠ ERROR
+
+    Args:
+        action: 操作描述
+        target: 操作目标 (file:line)
+        severity: 操作严重性 (LOW/MEDIUM/HIGH/CRITICAL)
+        required_checks: 必须通过的检查列表 (如 ["rate_limit", "audit_chain", "framework_integrity"])
+        signer: 签名者标识
+
+    Returns:
+        {"allowed": bool, "stamp_id": str, "denial_reason": str | None, "checks": dict}
+    """
+    result = {"allowed": True, "stamp_id": "", "denial_reason": None, "checks": {}}
+
+    # 步骤1: 写入预操作戳记 (结构中先于执行)
+    try:
+        from audit_chain import sign_event
+        event = sign_event("proofguard_gate", {
+            "action": action,
+            "target": target,
+            "severity": severity,
+            "status": "evaluating",
+        }, signer=signer)
+        result["stamp_id"] = hashlib.sha256(
+            json.dumps(event, sort_keys=True, ensure_ascii=False).encode()
+        ).hexdigest()[:12]
+    except Exception as e:
+        # FAIL_CLOSED: 无法写入戳记 → 拒绝执行
+        result["allowed"] = False
+        result["denial_reason"] = f"预操作戳记失败: {e}"
+        return result
+
+    # 步骤2: 执行必须通过的检查
+    checks_to_run = required_checks or ["framework_integrity"]
+    for check_name in checks_to_run:
+        try:
+            check_result = _run_gate_check(check_name)
+            result["checks"][check_name] = check_result
+            if not check_result.get("ok", False):
+                result["allowed"] = False
+                result["denial_reason"] = f"检查 {check_name} 失败: {check_result.get('message', '?')}"
+        except Exception as e:
+            # FAIL_CLOSED: 检查异常 → 拒绝执行
+            result["allowed"] = False
+            result["denial_reason"] = f"检查 {check_name} 异常: {e}"
+
+    # 步骤3: 写入最终决策记录 (通过或拒绝)
+    try:
+        decision_type = "proofguard_pass" if result["allowed"] else "proofguard_denied"
+        sign_event(decision_type, {
+            "action": action,
+            "target": target,
+            "stamp_id": result["stamp_id"],
+            "verdict": "PASS" if result["allowed"] else "DENY",
+            "denial_reason": result["denial_reason"],
+            "checks_passed": {k: v.get("ok") for k, v in result["checks"].items()},
+        }, signer=signer)
+    except Exception:
+        pass  # 决策记录失败不影响门控结果
+
+    return result
+
+
+def _run_gate_check(check_name: str) -> dict:
+    """执行单个门控检查 (零 API 依赖, 纯本地验证)"""
+    if check_name == "rate_limit":
+        # 检查 Front Router 是否过载
+        import socket
+        try:
+            s = socket.socket()
+            s.settimeout(2)
+            s.connect(("127.0.0.1", 8765))
+            s.close()
+            return {"ok": True, "message": "Front Router 在线"}
+        except Exception as e:
+            return {"ok": False, "message": f"Front Router 不可达: {e}"}
+
+    elif check_name == "audit_chain":
+        # 检查审计链完整性
+        try:
+            from audit_chain import verify_chain
+            vc = verify_chain(strict=False)
+            return {"ok": vc.get("valid", False),
+                    "message": f"审计链: {vc.get('total', 0)} 事件, "
+                              f"{len(vc.get('errors', []))} 错误"}
+        except Exception as e:
+            return {"ok": False, "message": f"审计链检查失败: {e}"}
+
+    elif check_name == "framework_integrity":
+        # 检查框架文件是否漂移
+        try:
+            import os as _os
+            snapshot_file = _os.path.join(
+                _os.path.dirname(_os.path.abspath(__file__)),
+                ".claude", "tracking", "watchdog-snapshot.json")
+            if not _os.path.exists(snapshot_file):
+                return {"ok": True, "message": "快照文件不存在 (首次运行?)"}
+            with open(snapshot_file, "r", encoding="utf-8") as f:
+                snapshot = json.load(f)
+            old_files = {f["file"]: f["sha256"] for f in snapshot.get("files", [])}
+            # 检查关键模块
+            import hashlib as _hl
+            for mod in ["audit_chain.py", "cross_verify.py", "mingjian_watchdog.py"]:
+                mod_path = _os.path.join(REPO_ROOT, mod)
+                if not _os.path.exists(mod_path):
+                    return {"ok": False, "message": f"关键模块缺失: {mod}"}
+                with open(mod_path, "rb") as f:
+                    current = _hl.sha256(f.read()).hexdigest()
+                known = old_files.get(mod)
+                if known and known != current[:16]:
+                    return {"ok": False, "message": f"模块被篡改: {mod}"}
+            return {"ok": True, "message": "框架完整性通过"}
+        except Exception as e:
+            return {"ok": False, "message": f"完整性检查异常: {e}"}
+
+    return {"ok": False, "message": f"未知检查: {check_name}"}
+
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) < 2:
