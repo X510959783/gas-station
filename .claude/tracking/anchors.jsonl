@@ -17,3 +17,4 @@
 {"anchor_type": "github-commit", "protocol_version": "v1.0", "merkle_root": "1376b767599d02d13fa837f127960a2e4f9cddebd04630d2c0ca30c3ce9572f0", "tree_size": 37, "event_count": 87, "event_range": [0, 84], "anchored_at": "2026-05-28T16:37:01Z"}
 {"anchor_type": "github-commit", "protocol_version": "v1.0", "merkle_root": "56dd06701bdde280f2d7c9d6e746ddee22ef651c9c0e5456d9cb1d86d18d0e2b", "tree_size": 38, "event_count": 90, "event_range": [0, 87], "anchored_at": "2026-05-28T17:07:01Z"}
 {"anchor_type": "github-commit", "protocol_version": "v1.0", "merkle_root": "746fae5bd7f062f226cd9c87248b523b6dd28dd70b45d8f2a703aaaf323912de", "tree_size": 39, "event_count": 93, "event_range": [0, 90], "anchored_at": "2026-05-28T17:37:01Z"}
+{"anchor_type": "github-commit", "protocol_version": "v1.0", "merkle_root": "1901db9de1a5354e8d2cba4a6834ad6d64ef517088ef2749467070b1f605b344", "tree_size": 40, "event_count": 96, "event_range": [0, 93], "anchored_at": "2026-05-28T18:07:02Z"}
