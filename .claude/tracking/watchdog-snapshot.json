@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-05-28T13:07:01Z",
+  "files": [
+    {
+      "file": ".claude/framework-v2-minimal.md",
+      "sha256": "7b363302f057863e"
+    },
+    {
+      "file": ".claude/deepdig-framework-v3.2.md",
+      "sha256": "82f33e27c3a427a2"
+    },
+    {
+      "file": ".claude/INSPECTION-MINGJIAN-FRAMEWORK.md",
+      "sha256": "5e82a28645ae3e5a"
+    },
+    {
+      "file": ".claude/INSPECTION-REPORT.md",
+      "sha256": "6e71b02ed3b39024"
+    },
+    {
+      "file": "cross_verify.py",
+      "sha256": "6fcf01daf89d8645"
+    },
+    {
+      "file": "audit_chain.py",
+      "sha256": "d646112d6e401998"
+    },
+    {
+      "file": "front_router.py",
+      "sha256": "b0c16cda58c6ed63"
+    },
+    {
+      "file": "mingjian_watchdog.py",
+      "sha256": "9768b6c44852e5b6"
+    },
+    {
+      "file": "watchdog_external.py",
+      "sha256": "6eb60cca300c62aa"
+    },
+    {
+      "file": ".github/workflows/external-watchdog.yml",
+      "sha256": "da29f56b6c3bb7e0"
+    }
+  ]
+}
