@@ -76,6 +76,11 @@ jobs:
             echo "完整性清单已存在, 跳过初始化"
           fi
 
+      - name: 重新生成框架基线 (适配 Linux LF 换行符)
+        run: |
+          python mingjian_watchdog.py --init
+          echo "框架基线已从 GitHub 环境重新生成"
+
       - name: 执行外部看门狗
         id: watchdog
         run: |
