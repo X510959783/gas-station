@@ -606,6 +606,19 @@ def run_all_checks() -> dict:
     # 记录到日志
     log_event("watchdog_run", report, severity="INFO" if all_ok else "WARNING")
 
+    # 向审计链追加看门狗运行事件 (密码学可追溯)
+    try:
+        from audit_chain import sign_event as _audit_sign
+        _audit_sign("watchdog_run", {
+            "health": health,
+            "checks_summary": {
+                name: r.get("ok") for name, r in results.items()
+            },
+            "duration_ms": round(duration_ms, 1),
+        }, signer="mingjian-watchdog")
+    except Exception:
+        pass  # 审计链写入失败不阻塞主流程
+
     # 写入健康状态文件 — 供外部看门狗 (GitHub Actions / 云VM) 验证
     _write_health_file(report)
 
