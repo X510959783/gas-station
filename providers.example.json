@@ -1,0 +1,24 @@
+{
+  "_comment": "AI 供应商 API 密钥配置模板。复制为 providers.json 后填入真实密钥。建议优先使用环境变量: QINIU_API_KEY / CEREBRAS_API_KEY / GROQ_API_KEY / SKYCLAW_API_KEY",
+  "providers": {
+    "qiniu-claude": {
+      "api_key": "sk-你的七牛云密钥",
+      "enabled": false,
+      "_how_to_get": "访问 https://www.qnaigc.com → 注册 → API Keys → 国内直连 Anthropic 原生协议",
+      "_model": "claude-sonnet-4-6",
+      "_pricing": "¥17.9/M in, ¥89.3/M out"
+    },
+    "cerebras": {
+      "api_key": "",
+      "enabled": false,
+      "_how_to_get": "访问 https://cloud.cerebras.ai → 注册 → API Keys → 免费1M token/天",
+      "_note": "GFW 封锁，国内无法直接访问"
+    },
+    "groq": {
+      "api_key": "",
+      "enabled": false,
+      "_how_to_get": "访问 https://console.groq.com → 注册 → API Keys → 免费1,000 req/天",
+      "_note": "GFW 封锁，国内无法直接访问"
+    }
+  }
+}
