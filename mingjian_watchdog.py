@@ -29,6 +29,7 @@ CHAIN_FILE = os.path.join(TRACKING_DIR, "audit-chain.jsonl")
 ROOT_RISKS = os.path.join(TRACKING_DIR, "root-risks-status.json")
 HEALTH_FILE = os.path.join(TRACKING_DIR, "watchdog-health.json")
 PID_FILE = os.path.join(TRACKING_DIR, "watchdog.pid")
+SILENT_FAILURE_LOG = os.path.join(TRACKING_DIR, "silent-failure.json")  # 静默失败检测基线
 
 # 日志轮转配置
 MAX_LOG_SIZE = 2 * 1024 * 1024   # 2MB
@@ -418,6 +419,116 @@ def check_meta_watchdog() -> dict:
 
 
 # ═══════════════════════════════════════════════════════════════
+# 静默失败检测 (Silent Failure Detection — 2026 最佳实践)
+# 基于: silentwatch-mcp + AI Agent Kill Switch 模式
+# 检测三类静默失败:
+#   1. 空输出 — 看门狗运行但无有效结果
+#   2. 持续时间异常 — 运行时间偏离历史基线 >3σ
+#   3. 过期运行 — 上次运行超过阈值时间
+# ═══════════════════════════════════════════════════════════════
+
+SILENT_FAILURE_MAX_HISTORY = 30    # 保留最近30次运行时间
+SILENT_FAILURE_OVERDUE_HOURS = 1.5 # 超过此时间未运行→告警
+SILENT_FAILURE_ZSCORE = 3.0        # Z-score 异常阈值
+
+
+def check_silent_failure() -> dict:
+    """静默失败检测 — 检测看门狗自身的异常行为
+
+    三信号检测:
+      1. 空输出/空结果: 全部检查返回未知状态→可能看门狗被替换为空壳
+      2. 持续时间异常: 运行时间 Z-score > 3σ → 可能被注入了恶意检查
+      3. 过期运行: 上次运行 > 1.5h → 计划任务可能被禁用
+    """
+    now = datetime.now(timezone.utc)
+    issues = []
+
+    # 信号1: 加载历史运行基线
+    baseline = _load_silent_failure_baseline()
+    run_history = baseline.get("run_history", [])
+
+    # 信号2: 过期运行检测
+    overdue_ok = True
+    if run_history:
+        last_ts_str = run_history[-1].get("timestamp", "")
+        if last_ts_str:
+            try:
+                last_ts = datetime.fromisoformat(last_ts_str.replace("Z", "+00:00"))
+                hours_since = (now - last_ts).total_seconds() / 3600
+                if hours_since > SILENT_FAILURE_OVERDUE_HOURS:
+                    overdue_ok = False
+                    issues.append(f"看门狗过期: 上次运行 {hours_since:.1f}h 前 (阈值 {SILENT_FAILURE_OVERDUE_HOURS}h)")
+            except ValueError:
+                pass
+
+    # 信号3: 持续时间异常检测 (Z-score)
+    duration_ok = True
+    if len(run_history) >= 10:
+        durations = [r.get("duration_ms", 0) for r in run_history if r.get("duration_ms")]
+        if durations:
+            mean_dur = sum(durations) / len(durations)
+            std_dur = (sum((d - mean_dur) ** 2 for d in durations) / len(durations)) ** 0.5
+            last_dur = durations[-1]
+            if std_dur > 0:
+                zscore = abs(last_dur - mean_dur) / std_dur
+                if zscore > SILENT_FAILURE_ZSCORE:
+                    duration_ok = False
+                    issues.append(f"运行时间异常: {last_dur}ms (均值={mean_dur:.0f}ms, Z={zscore:.1f})")
+
+    # 信号4: 空输出检测 (所有检查都返回 unknown → 可疑)
+    # 在主流程 run_all_checks() 之后调用, 这里只加载基线
+    empty_output_ok = True
+
+    ok = overdue_ok and duration_ok and empty_output_ok
+    return {
+        "ok": ok,
+        "overdue_ok": overdue_ok,
+        "duration_ok": duration_ok,
+        "empty_output_ok": empty_output_ok,
+        "issues": issues,
+        "run_count": len(run_history),
+        "message": "静默失败检测通过" if ok else "; ".join(issues),
+    }
+
+
+def _load_silent_failure_baseline() -> dict:
+    """加载静默失败检测基线"""
+    if os.path.exists(SILENT_FAILURE_LOG):
+        try:
+            with open(SILENT_FAILURE_LOG, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {"run_history": []}
+
+
+def _update_silent_failure_baseline(duration_ms: float, report: dict):
+    """更新静默失败基线 — 记录本次运行时间和结果摘要"""
+    baseline = _load_silent_failure_baseline()
+    history = baseline.get("run_history", [])
+
+    entry = {
+        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "duration_ms": round(duration_ms, 1),
+        "health": report.get("health", "?"),
+        "checks_count": len(report.get("checks", {})),
+        "failed_checks": sum(1 for r in report.get("checks", {}).values() if not r.get("ok")),
+    }
+    history.append(entry)
+
+    # 只保留最近 N 次
+    if len(history) > SILENT_FAILURE_MAX_HISTORY:
+        history = history[-SILENT_FAILURE_MAX_HISTORY:]
+
+    baseline["run_history"] = history
+    baseline["updated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    os.makedirs(TRACKING_DIR, exist_ok=True)
+    with open(SILENT_FAILURE_LOG, "w", encoding="utf-8") as f:
+        json.dump(baseline, f, ensure_ascii=False, indent=2)
+
+
+# ═══════════════════════════════════════════════════════════════
 # 健康状态文件 — 供外部看门狗 (GitHub Actions / 云VM) 验证
 # ═══════════════════════════════════════════════════════════════
 
@@ -457,6 +568,7 @@ def _write_health_file(report: dict):
 
 def run_all_checks() -> dict:
     """执行所有检查, 返回汇总报告"""
+    start_time = time.time()
     results = {}
 
     checks = [
@@ -467,6 +579,7 @@ def run_all_checks() -> dict:
         ("cross_verify", check_cross_verify),
         ("root_risks", check_root_risks),
         ("meta_watchdog", check_meta_watchdog),
+        ("silent_failure", check_silent_failure),
     ]
 
     all_ok = True
@@ -480,10 +593,13 @@ def run_all_checks() -> dict:
             results[check_name] = {"ok": False, "message": f"检查异常: {e}"}
             all_ok = False
 
+    duration_ms = (time.time() - start_time) * 1000
+
     health = "HEALTHY" if all_ok else "WARNING"
     report = {
         "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "health": health,
+        "duration_ms": round(duration_ms, 1),
         "checks": results,
     }
 
@@ -492,6 +608,9 @@ def run_all_checks() -> dict:
 
     # 写入健康状态文件 — 供外部看门狗 (GitHub Actions / 云VM) 验证
     _write_health_file(report)
+
+    # 更新静默失败基线
+    _update_silent_failure_baseline(duration_ms, report)
 
     # 如果异常, 写入告警——按检查类型分别冷却
     if not all_ok:
