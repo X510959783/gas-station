@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-05-28T18:37:01Z",
-  "health": "HEALTHY",
+  "timestamp": "2026-05-29T18:38:02Z",
+  "health": "WARNING",
   "checks_summary": {
     "bootstrap_integrity": {
-      "ok": true,
-      "message": "自完整性: 5 模块通过"
+      "ok": false,
+      "message": "自完整性失败: 3 个模块被篡改"
     },
     "port": {
       "ok": true,
@@ -12,7 +12,7 @@
     },
     "audit_chain": {
       "ok": true,
-      "message": "审计链有效: 97 事件"
+      "message": "审计链有效: 255 事件"
     },
     "framework_integrity": {
       "ok": true,
@@ -35,11 +35,11 @@
       "message": "静默失败检测通过"
     },
     "knowledge_freshness": {
-      "ok": true,
-      "message": "知识新鲜 (4h前刷新, 9条发现)"
+      "ok": false,
+      "message": "知识刷新过期 (28h前), 需要执行每日前沿侦查——6个领域"
     }
   },
-  "pid": 30284,
+  "pid": 37284,
   "hostname": "薛立堃",
-  "_heartbeat": "2026-05-28T19:07:00Z"
+  "_heartbeat": "2026-05-29T19:07:01Z"
 }
