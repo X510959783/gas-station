@@ -1,22 +1,22 @@
 {
-  "timestamp": "2026-05-29T18:38:02Z",
+  "timestamp": "2026-05-30T18:52:41Z",
   "health": "WARNING",
   "checks_summary": {
     "bootstrap_integrity": {
-      "ok": false,
-      "message": "自完整性失败: 3 个模块被篡改"
+      "ok": true,
+      "message": "自完整性: 7 模块通过"
     },
     "port": {
-      "ok": true,
-      "message": "端口 8765 正常监听"
+      "ok": false,
+      "message": "端口 8765 无响应: [WinError 10061] 由于目标计算机积极拒绝，无法连接。"
     },
     "audit_chain": {
       "ok": true,
-      "message": "审计链有效: 255 事件"
+      "message": "审计链有效: 445 事件"
     },
     "framework_integrity": {
       "ok": true,
-      "message": "10/10 文件完整"
+      "message": "16/16 文件完整 (1 条天使假设抑制)"
     },
     "cross_verify": {
       "ok": true,
@@ -24,7 +24,7 @@
     },
     "root_risks": {
       "ok": true,
-      "message": "根风险: 4 OPEN / 6 CLOSED (60%)"
+      "message": "根风险: 0 OPEN / 10 CLOSED (100%)"
     },
     "meta_watchdog": {
       "ok": true,
@@ -34,12 +34,20 @@
       "ok": true,
       "message": "静默失败检测通过"
     },
+    "anomaly_patterns": {
+      "ok": true,
+      "message": "SafeQuant 扫描通过 (5 文件)"
+    },
+    "tracking_ttl": {
+      "ok": true,
+      "message": "追踪文件 TTL: 10 健康, 0 过期, 0 CRITICAL, 0 缺失"
+    },
     "knowledge_freshness": {
-      "ok": false,
-      "message": "知识刷新过期 (28h前), 需要执行每日前沿侦查——6个领域"
+      "ok": true,
+      "message": "知识新鲜 (11h前刷新, 9条发现)"
     }
   },
-  "pid": 37284,
+  "pid": 25900,
   "hostname": "薛立堃",
-  "_heartbeat": "2026-05-29T19:07:01Z"
+  "_heartbeat": "2026-05-30T19:07:01Z"
 }
