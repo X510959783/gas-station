@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-31T18:38:04Z",
+  "timestamp": "2026-06-01T17:08:04Z",
   "health": "WARNING",
   "checks_summary": {
     "bootstrap_integrity": {
@@ -12,7 +12,7 @@
     },
     "audit_chain": {
       "ok": true,
-      "message": "审计链有效: 597 事件"
+      "message": "审计链有效: 739 事件"
     },
     "framework_integrity": {
       "ok": true,
@@ -44,10 +44,10 @@
     },
     "knowledge_freshness": {
       "ok": false,
-      "message": "知识刷新过期 (35h前), 需要执行每日前沿侦查——6个领域"
+      "message": "知识刷新过期 (57h前), 需要执行每日前沿侦查——6个领域"
     }
   },
-  "pid": 12432,
+  "pid": 7804,
   "hostname": "薛立堃",
-  "_heartbeat": "2026-05-31T19:07:02Z"
+  "_heartbeat": "2026-06-01T19:07:02Z"
 }
